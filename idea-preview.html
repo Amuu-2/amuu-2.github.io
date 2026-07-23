@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>创意试衣间 · 六个候选设计</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;900&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  :root {
+    /* 琥珀 drop(仅 E demo 用,选定后会进正式 tokens) */
+    --amber-accent: oklch(80% 0.15 85);
+    --amber-accent-2: oklch(88% 0.17 85);
+    --amber-glow: 0 0 6px oklch(80% 0.15 85 / 0.55), 0 0 24px oklch(80% 0.15 85 / 0.30);
+    --amber-neutral: oklch(66% 0.05 85);
+  }
+  * { box-sizing: border-box; }
+  html, body { overflow-x: clip; }
+  body {
+    margin: 0;
+    background: var(--color-paper);
+    color: var(--color-ink-2);
+    font-family: var(--font-body);
+    line-height: 1.7;
+    padding: var(--space-2xl) var(--page-gutter) var(--space-3xl);
+  }
+  .wrap { max-width: 56rem; margin-inline: auto; }
+  h1 { font-family: var(--font-display); font-weight: 900; color: var(--color-ink); font-size: var(--text-xl); margin: 0; }
+  .head-note { color: var(--color-neutral); font-size: var(--text-sm); margin-top: var(--space-xs); }
+  .mono {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+  .demo {
+    margin-top: var(--space-2xl);
+    border: 1px solid var(--color-rule);
+    border-radius: var(--radius-card);
+    background: var(--color-paper-2);
+    padding: var(--space-xl);
+  }
+  .demo > p.desc { color: var(--color-neutral); font-size: var(--text-sm); margin: var(--space-2xs) 0 var(--space-md); max-width: 70ch; }
+  .btn {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.06em;
+    color: var(--color-accent);
+    background: none;
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-sm);
+    padding: var(--space-xs) var(--space-md);
+    min-height: 44px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color var(--dur-short) var(--ease-out), background-color var(--dur-short) var(--ease-out);
+  }
+  .btn:hover { border-color: var(--color-accent); background: var(--color-paper-3); }
+  .btn:active { background: var(--color-paper); }
+  .btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+
+  /* A · boot */
+  .boot {
+    margin-top: var(--space-md);
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-paper);
+    min-height: 12rem;
+    padding: var(--space-md) var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    color: var(--color-accent);
+    cursor: pointer;
+  }
+  .boot p { margin: 0; max-width: none; }
+  .boot .ok { color: var(--color-accent-2); text-shadow: var(--glow-text); }
+  .boot .dim { color: var(--color-neutral); }
+
+  /* B · cli */
+  .cli {
+    margin-top: var(--space-md);
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-sm);
+    background: var(--color-paper);
+    padding: var(--space-md) var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+  }
+  .cli__out { min-height: 2rem; max-width: none; }
+  .cli__out p { margin: 0; max-width: none; overflow-wrap: anywhere; }
+  .cli__out .in { color: var(--color-neutral); }
+  .cli__out .res { color: var(--color-accent); }
+  .cli__out .egg { color: var(--color-accent-2); text-shadow: var(--glow-text); }
+  .cli__row { display: flex; gap: var(--space-xs); align-items: center; margin-top: var(--space-xs); }
+  .cli__prompt { color: var(--color-accent-2); }
+  .cli input {
+    flex: 1;
+    min-width: 0;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--color-ink);
+    font: inherit;
+    letter-spacing: 0.02em;
+    caret-color: var(--color-accent);
+    min-height: 44px;
+  }
+  .cli:focus-within { border-color: var(--color-accent); }
+
+  /* C · scramble */
+  .scr-line { display: flex; gap: var(--space-lg); align-items: center; flex-wrap: wrap; margin-top: var(--space-md); }
+  .scr-cn { font-family: var(--font-display); font-weight: 900; font-size: var(--text-xl); color: var(--color-ink); }
+  .scr-num { font-family: var(--font-mono); font-size: var(--text-2xl); color: var(--color-accent); text-shadow: var(--glow-text); }
+  .scr-hover { margin-top: var(--space-md); color: var(--color-neutral); font-size: var(--text-sm); }
+  .scr-hover b { color: var(--color-accent); font-weight: 500; cursor: default; }
+
+  /* D · statusbar */
+  .sbar-stage { margin-top: var(--space-md); border: 1px solid var(--color-rule-2); border-radius: var(--radius-sm); overflow: hidden; }
+  .sbar-fake { height: 5rem; background: var(--color-paper); display: grid; place-items: center; color: var(--color-neutral); font-size: var(--text-sm); }
+  .sbar {
+    display: flex;
+    gap: 0;
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: var(--color-paper-3);
+    border-top: 1px solid var(--color-rule-2);
+    color: var(--color-neutral);
+    overflow-x: auto;
+  }
+  .sbar span { padding: var(--space-xs) var(--space-md); white-space: nowrap; }
+  .sbar span + span { border-inline-start: 1px solid var(--color-rule); }
+  .sbar .hot { color: var(--color-paper); background: var(--color-accent); }
+  .sbar .grow { flex: 1; padding: 0; }
+
+  /* E · drop switch */
+  .drop-stage { margin-top: var(--space-md); border: 1px solid var(--color-rule-2); border-radius: var(--radius-sm); background: var(--color-paper); padding: var(--space-lg); }
+  .drop-stage[data-drop="amber"] { --color-accent: var(--amber-accent); --color-accent-2: var(--amber-accent-2); --glow-text: var(--amber-glow); --color-neutral: var(--amber-neutral); }
+  .lever {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    background: none;
+    border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-pill);
+    padding: var(--space-2xs);
+    cursor: pointer;
+    min-height: 44px;
+    transition: border-color var(--dur-short) var(--ease-out);
+  }
+  .lever:hover { border-color: var(--color-accent); }
+  .lever:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+  .lever span {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    padding: var(--space-2xs) var(--space-sm);
+    border-radius: var(--radius-pill);
+    color: var(--color-neutral);
+  }
+  .drop-stage[data-drop="night"] .lever .g,
+  .drop-stage[data-drop="amber"] .lever .a { background: var(--color-accent); color: var(--color-paper); }
+  .drop-demo { margin-top: var(--space-md); }
+  .drop-demo .big { font-family: var(--font-mono); font-size: var(--text-2xl); color: var(--color-accent); text-shadow: var(--glow-text); }
+  .drop-demo .label { font-family: var(--font-mono); font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral); margin-top: var(--space-2xs); }
+
+  /* F · typewriter */
+  .tw {
+    margin-top: var(--space-md);
+    font-size: var(--text-md);
+    color: var(--color-ink-2);
+    min-height: 3.5em;
+    max-width: 34em;
+  }
+  .tw .tw-caret { display: inline-block; width: 0.55ch; height: 1.05em; background: var(--color-accent); vertical-align: -0.12em; animation: blink 1s steps(2) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tw .tw-caret { animation: none; }
+  }
+  @media (max-width: 40rem) {
+    .demo { padding: var(--space-md); }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <span class="mono">$ PREVIEW IDEAS --A..F</span>
+  <h1>创意试衣间 · 六个候选设计</h1>
+  <p class="head-note">演示草稿,不影响正式页。每个 demo 都能真实交互;选定后我会正式化接入 index.html。开启系统"减少动态效果"时,动画自动停用。</p>
+
+  <section class="demo">
+    <span class="mono">A · 开机自检序列 BOOT SEQUENCE</span>
+    <p class="desc">正式版:首次进入网站播放约 1.5 秒,之后本次会话不再播;点击任意处可跳过。</p>
+    <button class="btn" id="bootBtn">▶ 播放</button>
+    <div class="boot" id="bootScreen" title="播放中点击可跳过"><p class="dim">待机中 · 点上方播放</p></div>
+  </section>
+
+  <section class="demo">
+    <span class="mono">B · 可交互命令行 INTERACTIVE CLI</span>
+    <p class="desc">正式版:按 <b style="color:var(--color-accent)">/</b> 键随时呼出。试试:help · open hupu · whoami · contact · sudo hire zhanglimu</p>
+    <div class="cli">
+      <div class="cli__out" id="cliOut"><p class="res">zlm-terminal v1.0 · 输入 help 查看命令</p></div>
+      <div class="cli__row"><span class="cli__prompt">$</span><input id="cliIn" type="text" autocomplete="off" spellcheck="false" aria-label="终端命令输入" placeholder="输入命令后回车…"></div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <span class="mono">C · 乱码解码 TEXT SCRAMBLE</span>
+    <p class="desc">正式版:卡片标题与三个大数在首次进入视口时解码一次(0.5 秒),不重复播。</p>
+    <button class="btn" id="scrBtn">▶ 解码</button>
+    <div class="scr-line">
+      <span class="scr-cn" id="scrCn" data-text="然后自己做产品。">然后自己做产品。</span>
+      <span class="scr-num" id="scrNum" data-text="+70%">+70%</span>
+    </div>
+    <p class="scr-hover">附:hover 触发版 —— 把鼠标放到这里:<b id="scrHover" data-text="SUDO HIRE ZHANGLIMU">SUDO HIRE ZHANGLIMU</b></p>
+  </section>
+
+  <section class="demo">
+    <span class="mono">D · 终端状态栏 STATUS BAR</span>
+    <p class="desc">正式版:固定在页面底部,SECTION 随滚动实时变化(scrollspy),UPTIME 记录 HR 在你页面停留的时长。</p>
+    <div class="sbar-stage">
+      <div class="sbar-fake">(想象这里是页面内容,状态栏钉在视口底部)</div>
+      <div class="sbar" role="status">
+        <span class="hot">ZLM-04</span>
+        <span>SECTION: <b id="sbSection">经历</b></span>
+        <span>UPTIME <b id="sbUp">00:00:00</b></span>
+        <span class="grow"></span>
+        <span id="sbClock">--:--</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <span class="mono">E · 双屏切换 GREEN ↔ AMBER</span>
+    <p class="desc">真实 CRT 有磷绿与琥珀两种荧光屏。正式版:开关放在导航条,选择记忆在本地,整站换色。</p>
+    <div class="drop-stage" data-drop="night" id="dropStage">
+      <button class="lever" id="leverBtn" aria-label="切换磷绿/琥珀配色"><span class="g">GREEN</span><span class="a">AMBER</span></button>
+      <div class="drop-demo">
+        <div class="big tnum">+70%</div>
+        <div class="label">工作台核心功能使用 · AB 实验 —— 这块面板的所有颜色随开关整体切换</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="demo">
+    <span class="mono">F · 打字机输出 TYPEWRITER</span>
+    <p class="desc">正式版:hero 的 lede 首次进入时逐字打出,约 1 秒完成,只播一次。</p>
+    <button class="btn" id="twBtn">▶ 重放</button>
+    <p class="tw" id="twOut"></p>
+  </section>
+</div>
+
+<script>
+(function () {
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---------- A · boot ---------- */
+  const bootLines = [
+    ["dim",  "ZLM TERMINAL BIOS v4.0"],
+    ["",     "POWER ON ................ OK"],
+    ["",     "MEM CHECK ............... 4 ROLES FOUND"],
+    ["",     "LOADING DOSSIER ZLM-04 .."],
+    ["",     "MOUNT /experience ....... OK"],
+    ["",     "MOUNT /ai-agent ......... OK"],
+    ["ok",   "READY. 档案已就绪 _"]
+  ];
+  const bootScreen = document.getElementById("bootScreen");
+  let bootTimer = [];
+  function bootPlay() {
+    bootTimer.forEach(clearTimeout); bootTimer = [];
+    bootScreen.innerHTML = "";
+    if (reduced) {
+      bootLines.forEach(([cls, t]) => bootScreen.insertAdjacentHTML("beforeend", `<p class="${cls}">${t}</p>`));
+      return;
+    }
+    let delay = 0;
+    bootLines.forEach(([cls, t], i) => {
+      delay += i === 0 ? 0 : 130 + (i % 3) * 60;
+      bootTimer.push(setTimeout(() => {
+        bootScreen.insertAdjacentHTML("beforeend", `<p class="${cls}">${t}</p>`);
+      }, delay));
+    });
+  }
+  document.getElementById("bootBtn").addEventListener("click", bootPlay);
+  bootScreen.addEventListener("click", () => { // 跳过:立即全部显示
+    bootTimer.forEach(clearTimeout); bootTimer = [];
+    bootScreen.innerHTML = bootLines.map(([cls, t]) => `<p class="${cls}">${t}</p>`).join("");
+  });
+
+  /* ---------- B · cli ---------- */
+  const cliOut = document.getElementById("cliOut");
+  const cliIn = document.getElementById("cliIn");
+  const CMDS = {
+    "help": () => ["res", "命令:help · open hupu|kuaile|angel · whoami · contact · clear"],
+    "whoami": () => ["res", "张理牧 · 产品实习生 · 上海 · 四段实习,每段都有可验证的数字"],
+    "contact": () => ["res", "→ 0253700878@shisu.edu.cn(正式版直接拉起邮件)"],
+    "open hupu": () => ["res", "→ 正式页中将打开:虎扑案例浮层"],
+    "open kuaile": () => ["res", "→ 正式页中将打开:块乐直播电商案例浮层"],
+    "open angel": () => ["res", "→ 正式页中将打开:时代天使案例浮层"],
+    "sudo hire zhanglimu": () => ["egg", "PERMISSION GRANTED · offer.exe 已加入执行队列 ▮"],
+    "clear": () => null
+  };
+  function cliPrint(cls, text) {
+    cliOut.insertAdjacentHTML("beforeend", `<p class="${cls}"></p>`);
+    cliOut.lastElementChild.textContent = text;
+    while (cliOut.children.length > 8) cliOut.firstElementChild.remove();
+  }
+  cliIn.addEventListener("keydown", (e) => {
+    if (e.key !== "Enter") return;
+    const raw = cliIn.value.trim();
+    cliIn.value = "";
+    if (!raw) return;
+    cliPrint("in", "$ " + raw);
+    const cmd = raw.toLowerCase();
+    if (cmd === "clear") { cliOut.innerHTML = ""; return; }
+    const fn = CMDS[cmd];
+    if (fn) { const [cls, text] = fn(); cliPrint(cls, text); }
+    else cliPrint("res", `command not found: ${raw} —— 输入 help 查看命令`);
+  });
+
+  /* ---------- C · scramble ---------- */
+  const POOL = "アイウエオカキクケコ0123456789#$%&@*+=/<>";
+  function scramble(el, dur) {
+    const target = el.dataset.text;
+    if (reduced) { el.textContent = target; return; }
+    const chars = [...target];
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const settled = Math.floor(t * chars.length);
+      el.textContent = chars.map((c, i) =>
+        i < settled || c === " " ? c : POOL[(i * 7 + Math.floor(now / 40)) % POOL.length]
+      ).join("");
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(frame);
+  }
+  document.getElementById("scrBtn").addEventListener("click", () => {
+    scramble(document.getElementById("scrCn"), 550);
+    scramble(document.getElementById("scrNum"), 450);
+  });
+  const scrHover = document.getElementById("scrHover");
+  scrHover.addEventListener("mouseenter", () => scramble(scrHover, 450));
+
+  /* ---------- D · statusbar ---------- */
+  const t0 = performance.now();
+  const pad = (n) => String(n).padStart(2, "0");
+  const SECTIONS = ["首屏", "数据", "经历", "项目", "档案"];
+  let si = 2;
+  setInterval(() => {
+    const s = Math.floor((performance.now() - t0) / 1000);
+    document.getElementById("sbUp").textContent = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}`;
+    const d = new Date();
+    document.getElementById("sbClock").textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  }, 1000);
+  setInterval(() => { // 轮换演示 scrollspy 效果
+    si = (si + 1) % SECTIONS.length;
+    document.getElementById("sbSection").textContent = SECTIONS[si];
+  }, 2600);
+
+  /* ---------- E · drop switch ---------- */
+  const stage = document.getElementById("dropStage");
+  document.getElementById("leverBtn").addEventListener("click", () => {
+    stage.dataset.drop = stage.dataset.drop === "night" ? "amber" : "night";
+  });
+
+  /* ---------- F · typewriter ---------- */
+  const TW_TEXT = "四段实习:直播间、十万人社区、AI 医疗产品、出海增长。每一段,都有可验证的数字。";
+  const twOut = document.getElementById("twOut");
+  let twTimer = [];
+  function twPlay() {
+    twTimer.forEach(clearTimeout); twTimer = [];
+    if (reduced) { twOut.innerHTML = TW_TEXT + '<span class="tw-caret"></span>'; return; }
+    twOut.innerHTML = '<span class="tw-caret"></span>';
+    const chars = [...TW_TEXT];
+    const step = Math.max(18, Math.floor(1000 / chars.length));
+    chars.forEach((c, i) => {
+      twTimer.push(setTimeout(() => {
+        twOut.innerHTML = chars.slice(0, i + 1).join("") + '<span class="tw-caret"></span>';
+      }, i * step));
+    });
+  }
+  document.getElementById("twBtn").addEventListener("click", twPlay);
+  twPlay();
+})();
+</script>
+</body>
+</html>

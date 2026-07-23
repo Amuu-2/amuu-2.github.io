@@ -1,0 +1,6 @@
+[
+  { "date": "2026-07-22", "macrostructure": "Marquee Hero", "theme": "custom", "theme_axes": "dark / heavy-sans+pixel / phosphor-green", "vibe": "赛博 CRT 档案:思源黑 900 × VT323 像素 × 磷绿霓虹", "base": "lumen-night", "fonts": "Noto Sans SC 400/900 + VT323(全页 2 族)", "enrichment": "Tier-A CSS apparatus (phosphor filament) + regmarks/titleblock/grain + RUN 命令框 + case-viewer 浮层(3 个公司风格 mockup)", "nav": "custom console masthead (~/ prompt)", "footer": "Ft5", "brief": "张理牧个人网站 · v5:字体方案 I + 案例详情浮层" },
+  { "date": "2026-07-22", "macrostructure": "Marquee Hero", "theme": "custom", "theme_axes": "dark / didone+vintage-CJK / phosphor-green", "vibe": "CRT 档案:复古工程 × 磷绿终端 × 铅印艺术", "base": "lumen-night", "enrichment": "Tier-A CSS apparatus + regmarks/titleblock/grain + RUN 命令框", "nav": "custom console masthead", "footer": "Ft5", "brief": "张理牧个人网站 · v4:磷绿 CRT 融合版" },
+  { "date": "2026-07-22", "macrostructure": "Marquee Hero", "theme": "lumen", "drop": "night", "theme_axes": "dark / classical-serif / brass", "enrichment": "Tier-A CSS apparatus (filament chamber)", "nav": "N5 (solid)", "footer": "Ft5", "brief": "张理牧个人网站 · redesign:艺术特色 + 科技感" },
+  { "date": "2026-07-22", "macrostructure": "Narrative Workflow", "theme": "Studio", "enrichment": "none", "nav": "N9", "footer": "Ft6", "brief": "张理牧 · 产品实习生个人网站(简历驱动)" }
+]

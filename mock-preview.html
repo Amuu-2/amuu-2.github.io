@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>示意图总览 · 张理牧个人网站</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;900&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .preview-wrap { max-width: 60rem; margin-inline: auto; padding: var(--space-2xl) var(--page-gutter); }
+  .preview-wrap > h1 { font-size: var(--text-xl); }
+  .preview-sec { margin-top: var(--space-2xl); }
+  .preview-sec > .eyebrow { margin-bottom: var(--space-sm); }
+  .preview-sec .mock-fig + .mock-fig { margin-top: var(--space-lg); }
+</style>
+</head>
+<body>
+<div class="preview-wrap">
+  <span class="eyebrow">$ PREVIEW MOCKUPS --ALL</span>
+  <h1>三个案例的示意面板总览</h1>
+  <p class="muted" style="margin-top:var(--space-sm); color:var(--color-neutral)">与正式页浮层内完全相同的渲染。示意重绘 · 非真实界面与数据。</p>
+
+  <div class="preview-sec" data-case="kuaile">
+    <span class="eyebrow">KUAILE.CASE · 电商橙</span>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="商品三层分层面板示意图">
+        <p class="m-title">直播间商品池 · 分层视图 <span class="m-muted">(50+ SKU)</span></p>
+        <div aria-hidden="true">
+          <div class="tier">
+            <span class="tier__label"><span class="chip">引流款</span></span>
+            <span class="tier__skus"><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span></span>
+            <span class="tier__note">低价拉曝光</span>
+          </div>
+          <div class="tier">
+            <span class="tier__label"><span class="chip chip--hot">利润款</span></span>
+            <span class="tier__skus"><span class="sku sku--hot"></span><span class="sku sku--hot"></span><span class="sku sku--hot"></span><span class="sku sku--hot"></span></span>
+            <span class="tier__note">前置曝光 · 主推</span>
+          </div>
+          <div class="tier">
+            <span class="tier__label"><span class="chip chip--soft">潜力款</span></span>
+            <span class="tier__skus"><span class="sku sku--soft"></span><span class="sku sku--soft"></span><span class="sku sku--soft"></span></span>
+            <span class="tier__note">观察位 · 待晋升</span>
+          </div>
+          <div class="seq">
+            <span class="seq__slot">开场·引流</span><span class="seq__arrow">-&gt;</span>
+            <span class="seq__slot seq__slot--hot">利润款 A</span><span class="seq__arrow">-&gt;</span>
+            <span class="seq__slot">引流·留人</span><span class="seq__arrow">-&gt;</span>
+            <span class="seq__slot seq__slot--hot">利润款 B</span><span class="seq__arrow">-&gt;</span>
+            <span class="seq__slot">潜力款·测款</span>
+          </div>
+        </div>
+      </div>
+      <figcaption>FIG.1 · 商品分层与排品序列 · 示意</figcaption>
+    </figure>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="排品策略前后对比示意图:策略前商品混排曝光分散,策略后三层分层且利润款前置">
+        <p class="m-title">直播间商品池 · 策略前后对比</p>
+        <div class="cmp" aria-hidden="true">
+          <div class="cmp__panel">
+            <span class="cmp__tag">策略前 · 50+ SKU 混排,曝光分散,利润款转化不足</span>
+            <div class="tier__skus" style="margin-top:8px"><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span></div>
+            <div class="seq"><span class="seq__slot">凭感觉出场</span><span class="seq__arrow">-&gt;</span><span class="seq__slot">随机排品</span></div>
+          </div>
+          <div class="cmp__panel cmp__panel--after">
+            <span class="cmp__badge">利润款 +30%</span>
+            <span class="cmp__tag"><b>策略后</b> · 数据分层,利润款前置承接</span>
+            <div class="tier__skus" style="margin-top:8px"><span class="sku sku--hot"></span><span class="sku sku--hot"></span><span class="sku sku--hot"></span><span class="sku"></span><span class="sku"></span><span class="sku"></span><span class="sku sku--soft"></span><span class="sku sku--soft"></span></div>
+            <div class="seq"><span class="seq__slot">开场·引流</span><span class="seq__arrow">-&gt;</span><span class="seq__slot seq__slot--hot">利润款前置</span><span class="seq__arrow">-&gt;</span><span class="seq__slot">潜力款测款</span></div>
+          </div>
+        </div>
+      </div>
+      <figcaption>提案 C · 块乐排品前后对比(替换或并入 FIG.1)</figcaption>
+    </figure>
+  </div>
+
+  <div class="preview-sec" data-case="hupu">
+    <span class="eyebrow">HUPU.CASE · 虎扑红</span>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="虎扑首页推流示意图">
+        <div class="hp-nav" aria-hidden="true"><span class="on">虎扑首页</span><span>NBA</span><span>CBA</span><span>足球</span><span>社区</span></div>
+        <div aria-hidden="true">
+          <div class="hp-scores">
+            <div class="hp-score"><span class="hp-score__tag">赛程节点 <b>今晚</b></span><span class="msg__line" style="width:80%"></span><span class="msg__line" style="width:65%"></span></div>
+            <div class="hp-score"><span class="hp-score__tag">球队热度 <b>高</b></span><span class="msg__line" style="width:72%"></span><span class="msg__line" style="width:58%"></span></div>
+            <div class="hp-score"><span class="hp-score__tag">赛程节点 <b>明日</b></span><span class="msg__line" style="width:76%"></span><span class="msg__line" style="width:50%"></span></div>
+          </div>
+          <div class="hp-feed">
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:85%"></span><span class="msg__line" style="width:55%"></span></span><span class="hp-post__tag chip chip--hot">推流·首页</span></div>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:70%"></span><span class="msg__line" style="width:42%"></span></span></div>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:78%"></span><span class="msg__line" style="width:60%"></span></span><span class="hp-post__tag chip chip--hot">推流·首页</span></div>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:64%"></span><span class="msg__line" style="width:38%"></span></span><span class="hp-post__tag chip chip--soft">复盘中</span></div>
+          </div>
+        </div>
+      </div>
+      <figcaption>FIG.1 · 按赛程与热度筛帖入首页 · 示意</figcaption>
+    </figure>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="赛事临时聊天室界面示意图">
+        <div class="chat__head">湖人 vs 勇士 · 临时聊天室<span class="m-live">按球队与关注场次匹配</span></div>
+        <div aria-hidden="true">
+          <div class="msg"><span class="msg__avatar"></span><span class="msg__lines"><span class="msg__line" style="width:72%"></span><span class="msg__line" style="width:45%"></span></span></div>
+          <div class="msg"><span class="msg__avatar msg__avatar--hot"></span><span class="msg__lines"><span class="msg__line" style="width:58%"></span></span></div>
+          <div class="msg"><span class="msg__avatar"></span><span class="msg__lines"><span class="msg__line" style="width:80%"></span><span class="msg__line" style="width:30%"></span></span></div>
+          <div class="msg"><span class="msg__avatar msg__avatar--hot"></span><span class="msg__lines"><span class="msg__line" style="width:52%"></span></span></div>
+        </div>
+      </div>
+      <figcaption>FIG.2 · 临时聊天室 · 示意(消息内容以色条代替)</figcaption>
+    </figure>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="推流策略前后对比示意图:策略前优质帖沉底,策略后高潜力帖带标签进首页">
+        <p class="m-title">首页信息流 · 策略前后对比</p>
+        <div class="cmp" aria-hidden="true">
+          <div class="cmp__panel">
+            <span class="cmp__tag">策略前 · 自然流,热点帖生命周期短,优质帖被淹没</span>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:70%"></span><span class="msg__line" style="width:44%"></span></span></div>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:62%"></span><span class="msg__line" style="width:38%"></span></span></div>
+            <div class="hp-post hp-post--sunk"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:82%"></span><span class="msg__line" style="width:56%"></span></span><span class="hp-post__tag chip">高潜力·沉底</span></div>
+          </div>
+          <div class="cmp__panel cmp__panel--after">
+            <span class="cmp__badge">日均回复 10w+</span>
+            <span class="cmp__tag"><b>策略后</b> · 按赛程/热度/质量筛帖,高潜力帖进首页</span>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:82%"></span><span class="msg__line" style="width:56%"></span></span><span class="hp-post__tag chip chip--hot">推流·首页</span></div>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:74%"></span><span class="msg__line" style="width:48%"></span></span><span class="hp-post__tag chip chip--hot">推流·首页</span></div>
+            <div class="hp-post"><span class="hp-post__thumb"></span><span class="hp-post__lines"><span class="msg__line" style="width:60%"></span><span class="msg__line" style="width:36%"></span></span><span class="hp-post__tag chip chip--soft">复盘中</span></div>
+          </div>
+        </div>
+      </div>
+      <figcaption>提案 B · 虎扑信息流前后对比(替换或并入 FIG.1)</figcaption>
+    </figure>
+  </div>
+
+  <div class="preview-sec" data-case="angel">
+    <span class="eyebrow">ANGELALIGN.CASE · iOrtho 蓝</span>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="iOrtho 医生工作台改版前后对比示意图">
+        <p class="m-title">iOrtho 医生工作台 · 改版前后对比</p>
+        <div class="cmp" aria-hidden="true">
+          <div class="cmp__panel">
+            <span class="cmp__tag">改版前 · 单一列表,查找路径长;通知混排,关键信息被淹没</span>
+            <div class="io__tabs"><span class="chip">全部病例</span></div>
+            <div class="io__row"><span class="msg__avatar"></span><span class="msg__line"></span></div>
+            <div class="io__row"><span class="msg__avatar"></span><span class="msg__line"></span></div>
+            <div class="io__row"><span class="msg__avatar"></span><span class="msg__line"></span></div>
+            <div class="io__row"><span class="msg__avatar"></span><span class="msg__line"></span></div>
+            <p class="io__group">通知 · 混排</p>
+            <div class="io__note"><span class="msg__line" style="max-width:78%"></span></div>
+            <div class="io__note"><span class="io__dot io__dot--hot"></span><span class="msg__line" style="max-width:62%"></span></div>
+            <div class="io__note"><span class="msg__line" style="max-width:70%"></span></div>
+          </div>
+          <div class="cmp__panel cmp__panel--after">
+            <span class="cmp__badge">核心功能使用率 +70%</span>
+            <span class="cmp__tag"><b>改版后</b> · 多维筛选直达;通知分层,重要置顶</span>
+            <div class="io__tabs"><span class="chip chip--hot">全部</span><span class="chip chip--soft">新病例</span><span class="chip chip--soft">中期阶段</span><span class="chip">方案待确认</span></div>
+            <div class="io__row"><span class="msg__avatar"></span><span class="msg__line" style="max-width:30%"></span><span class="chip">新病例</span><span class="io__dot io__dot--hot"></span><span class="io__act"></span></div>
+            <div class="io__row"><span class="msg__avatar"></span><span class="msg__line" style="max-width:26%"></span><span class="chip chip--soft">中期 2</span><span class="io__dot"></span><span class="io__act"></span></div>
+            <div class="io__row"><span class="msg__avatar"></span><span class="msg__line" style="max-width:32%"></span><span class="chip">新病例</span><span class="io__dot io__dot--hot"></span><span class="io__act"></span></div>
+            <p class="io__group"><b>重要通知</b> · 置顶触达</p>
+            <div class="io__note io__note--hot"><span class="io__dot io__dot--hot"></span><span class="msg__line" style="max-width:80%"></span></div>
+            <p class="io__group">普通消息 · 折叠收纳</p>
+            <div class="io__note"><span class="msg__line" style="max-width:66%"></span></div>
+          </div>
+        </div>
+      </div>
+      <figcaption>FIG.1 · 改版前 vs 改版后:病例多维筛选 + 通知分层 · 示意</figcaption>
+    </figure>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="四维数据看板示意图">
+        <p class="m-title">改版效果监控 · 四维看板</p>
+        <div class="dash" aria-hidden="true">
+          <div class="dash__card"><span class="dash__name">用户活跃</span><div class="dash__bars"><span style="height:40%"></span><span style="height:55%"></span><span style="height:48%"></span><span style="height:70%"></span><span style="height:85%"></span></div></div>
+          <div class="dash__card"><span class="dash__name">功能使用</span><div class="dash__bars"><span style="height:30%"></span><span style="height:45%"></span><span style="height:60%"></span><span style="height:75%"></span><span style="height:90%"></span></div></div>
+          <div class="dash__card"><span class="dash__name">病例处理</span><div class="dash__bars"><span style="height:50%"></span><span style="height:46%"></span><span style="height:62%"></span><span style="height:58%"></span><span style="height:72%"></span></div></div>
+          <div class="dash__card"><span class="dash__name">通知触达</span><div class="dash__bars"><span style="height:35%"></span><span style="height:52%"></span><span style="height:66%"></span><span style="height:80%"></span><span style="height:88%"></span></div></div>
+        </div>
+      </div>
+      <figcaption>FIG.2 · Redash + SQL 四维监控 · 示意</figcaption>
+    </figure>
+    <figure class="mock-fig">
+      <div class="mock" role="img" aria-label="AI 问答工作流示意图">
+        <div class="pipeline" aria-hidden="true">
+          <span class="chip">意图识别</span><span class="seq__arrow">-&gt;</span>
+          <span class="chip">知识检索</span><span class="seq__arrow">-&gt;</span>
+          <span class="chip chip--hot">答案生成</span><span class="seq__arrow">-&gt;</span>
+          <span class="chip chip--soft">风险校验</span><span class="seq__arrow">-&gt;</span>
+          <span class="chip">追问澄清</span>
+        </div>
+      </div>
+      <figcaption>FIG.3 · Agent 工作流管线 · 示意</figcaption>
+    </figure>
+  </div>
+</div>
+</body>
+</html>

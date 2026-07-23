@@ -1,0 +1,114 @@
+/* Hallmark · genre: atmospheric · macrostructure: Marquee Hero · theme: custom (base: lumen-night · vibe: "CRT 档案:复古工程 × 磷绿终端 × 铅印艺术") · enrichment: Tier-A CSS apparatus (phosphor filament) · nav: custom console masthead · footer: Ft5
+ * reference: hallmark terminal 主题截图(用户提供)—— 借用:磷绿点缀 · $ 命令 eyebrow · RUN 命令框 + 光标;未整站照搬
+ * fonts(方案 I): display = Noto Sans SC 900(黑弩级)· body = Noto Sans SC 400 · mono/数字 = VT323(DEC 终端像素体)—— 全页仅 2 族
+ * tone: 复古 × 科技 × 赛博 CRT · anchor hue: 150 (phosphor green) · 单色磷绿,亮度分层(88% 地标 / 82% 常规)
+ * contrast: pass (40–41) · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57)
+ */
+/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V4 */
+
+:root {
+  /* ---- colour · CRT 磷绿档案 · anchor hue 150 ---- */
+  --color-paper:      oklch(13% 0.012 150);
+  --color-paper-2:    oklch(17% 0.016 150);
+  --color-paper-3:    oklch(20% 0.018 150);
+  --color-rule:       oklch(28% 0.030 150);
+  --color-rule-2:     oklch(38% 0.050 148);
+  --color-ink:        oklch(95% 0.010 145);
+  --color-ink-2:      oklch(86% 0.014 145);
+  --color-neutral:    oklch(66% 0.060 145);
+  --color-accent:     oklch(82% 0.19 145);          /* 磷绿 phosphor */
+  --color-accent-2:   oklch(90% 0.21 145);          /* 高亮磷绿 · 动词地标/大数 */
+  --glow-text: 0 0 6px oklch(82% 0.19 145 / 0.55), 0 0 24px oklch(82% 0.19 145 / 0.30);
+  --color-glow:       oklch(82% 0.19 145 / 0.35);
+  --color-glow-2:     oklch(82% 0.19 145 / 0.12);
+  --color-paper-emit: oklch(82% 0.19 145 / 0.05);
+  --color-card-emit:  oklch(82% 0.19 145 / 0.05);
+  --color-card-emit-hover: oklch(82% 0.19 145 / 0.10);
+  --rule-blueprint:   oklch(95% 0.010 145 / 0.05);
+  --color-focus:      oklch(82% 0.19 145);
+  --color-filament-hot:  oklch(95% 0.08 145);
+  --color-filament-core: oklch(82% 0.19 145);
+  --color-chamber:    oklch(17% 0.016 150 / 0.8);
+  --color-highlight:  oklch(82% 0.19 145);
+  --color-regmark:    oklch(95% 0.010 145 / 0.28);
+  --shadow-chrome: 0 24px 60px -28px oklch(0% 0 0 / 0.55);
+
+  /* ---- type ---- */
+  --font-display: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-body:    "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-mono:    "VT323", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", ui-monospace, monospace; /* 中文回退到黑体,避免掉进宋体 */
+
+  --text-xs:   0.8rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-md:   1.25rem;
+  --text-lg:   1.5625rem;
+  --text-xl:   1.9531rem;
+  --text-2xl:  2.4414rem;
+  --text-stat: clamp(2.5rem, 4vw + 1rem, 4.5rem);
+  --text-display: clamp(2.5rem, 4.2vw + 1rem, 4.6rem);
+  --tracking-micro: 0.10em;
+
+  /* ---- space · 4pt ---- */
+  --space-3xs: 0.125rem;
+  --space-2xs: 0.25rem;
+  --space-xs:  0.5rem;
+  --space-sm:  0.75rem;
+  --space-md:  1rem;
+  --space-lg:  1.5rem;
+  --space-xl:  2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+
+  --page-gutter: clamp(1.25rem, 5vw, 4rem);
+  --measure: 62ch;
+
+  /* ---- motion ---- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long:  420ms;
+  --dur-pulse: 4s;
+
+  --rule-hairline: 1px solid var(--color-rule);
+  --radius-sm: 3px;
+  --radius-card: 10px;
+  --radius-pill: 999px;
+
+  --z-base: 1;
+  --z-raised: 10;
+  --z-sticky-nav: 300;
+
+  --color-backdrop: oklch(8% 0.01 150 / 0.82);
+}
+
+/* ---- case-study 浮层 · 各公司 UI 气质示意调色板(仅用于 mockup 面板内部)---- */
+[data-case="kuaile"] {
+  --case-surface:     oklch(97% 0.010 80);
+  --case-surface-2:   oklch(92% 0.016 80);
+  --case-ink:         oklch(26% 0.020 60);
+  --case-muted:       oklch(52% 0.020 60);
+  --case-accent:      oklch(54% 0.17 45);           /* 电商橙(压深保对比度) */
+  --case-accent-soft: oklch(54% 0.17 45 / 0.14);
+  --case-accent-ink:  oklch(99% 0.005 80);
+}
+[data-case="hupu"] {
+  --case-surface:     oklch(98% 0.004 25);
+  --case-surface-2:   oklch(93% 0.008 25);
+  --case-ink:         oklch(23% 0.012 25);
+  --case-muted:       oklch(51% 0.012 25);
+  --case-accent:      oklch(51% 0.19 27);           /* 虎扑红 */
+  --case-accent-soft: oklch(51% 0.19 27 / 0.10);
+  --case-accent-ink:  oklch(98% 0.004 25);
+}
+[data-case="angel"] {
+  --case-surface:     oklch(98% 0.005 240);
+  --case-surface-2:   oklch(93% 0.010 238);
+  --case-ink:         oklch(25% 0.020 250);
+  --case-muted:       oklch(51% 0.020 245);
+  --case-accent:      oklch(56% 0.16 252);          /* iOrtho 品牌蓝 */
+  --case-accent-soft: oklch(56% 0.16 252 / 0.10);
+  --case-accent-ink:  oklch(98% 0.005 240);
+}
