@@ -38,7 +38,7 @@
       <div>
         <span class="eyebrow">$ WHOAMI</span>
         <h1 class="hero__title">把想法,<em>做成</em>&#8288;能上线的产品。</h1>
-        <p class="hero__lede">四段实习:直播间、十万人社区、AI 医疗产品、出海增长。每一段,都有可验证的数字。</p>
+        <p class="hero__lede" id="lede">四段实习:直播间、十万人社区、AI 医疗产品、出海增长。每一段,都有可验证的数字。</p>
         <ul class="hero__meta">
           <li>上海</li>
           <li>上海外国语大学 · 数字经济硕士在读(2027 届)</li>
@@ -434,6 +434,75 @@
     const d = document.getElementById("case-" + m[1]);
     if (d) d.showModal();
   }
+})();
+
+// F · 打字机:hero lede 首次加载逐字打出(约 1.1s,只播一次);reduced-motion 直接显示
+(function () {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const lede = document.getElementById("lede");
+  if (!lede) return;
+  // 结构切段:普通文本 / <em> 文本,打字时保留动词高亮
+  const segs = [];
+  lede.childNodes.forEach((n) => {
+    if (n.nodeType === 3) segs.push({ t: n.textContent, em: false });
+    else if (n.nodeName === "EM") segs.push({ t: n.textContent, em: true });
+  });
+  const total = segs.reduce((s, x) => s + x.t.length, 0);
+  lede.style.minHeight = lede.offsetHeight + "px"; // 防打字过程布局抖动
+  const step = Math.max(16, Math.floor(1100 / total));
+  let shown = 0;
+  function render() {
+    let left = shown, html = "";
+    for (const s of segs) {
+      const take = Math.max(0, Math.min(s.t.length, left));
+      left -= take;
+      const part = s.t.slice(0, take);
+      html += s.em ? (part ? "<em>" + part + "</em>" : "") : part;
+    }
+    lede.innerHTML = html + (shown < total ? '<span class="caret"></span>' : "");
+  }
+  function tick() {
+    shown++;
+    render();
+    if (shown < total) setTimeout(tick, step);
+  }
+  lede.innerHTML = '<span class="caret"></span>';
+  setTimeout(tick, 350);
+})();
+
+// C · 乱码解码:卡片标题与三个大数首次进入视口时翻牌落定(约 0.5s,只播一次)
+(function () {
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+  const CJK_POOL = "アイウエオカキクケコサシスセソ█▓▒◆※";
+  const NUM_POOL = "0123456789#$%*+<>";
+  function scramble(el) {
+    const target = el.dataset.orig;
+    const pool = /[一-鿿]/.test(target) ? CJK_POOL : NUM_POOL;
+    const chars = [...target];
+    const dur = 520;
+    const start = performance.now();
+    function frame(now) {
+      const t = Math.min(1, (now - start) / dur);
+      const settled = Math.floor(t * chars.length);
+      el.textContent = chars.map((c, i) =>
+        i < settled || /\s/.test(c) ? c : pool[(i * 7 + Math.floor(now / 40)) % pool.length]
+      ).join("");
+      if (t < 1) requestAnimationFrame(frame);
+      else el.textContent = target;
+    }
+    requestAnimationFrame(frame);
+  }
+  const targets = document.querySelectorAll(".card h3, .stat b");
+  targets.forEach((el) => {
+    el.dataset.orig = el.textContent;
+    el.setAttribute("aria-label", el.textContent); // 屏幕阅读器始终读原文
+  });
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { scramble(e.target); io.unobserve(e.target); }
+    }
+  }, { rootMargin: "0px 0px -10% 0px" });
+  targets.forEach((el) => io.observe(el));
 })();
 
 // 段落一次性 fade-up;reduced-motion 直接显示
