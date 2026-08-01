@@ -449,6 +449,50 @@
 </dialog>
 
 <script>
+const REDUCED_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// 像素溶解转场(Kimi 场景切换机制重写):噪点棋盘按确定性伪随机顺序熄灭
+function pixelDissolve(host, opts) {
+  if (REDUCED_MOTION) return;
+  const { fixed = false, dur = 460 } = opts || {};
+  const ov = document.createElement("div");
+  ov.className = "dissolve" + (fixed ? " dissolve--page" : "");
+  const N = 140;
+  for (let i = 0; i < N; i++) {
+    const c = document.createElement("i");
+    c.style.animationDelay = Math.round(((i * 7919 + 373) % N) / N * dur) + "ms";
+    ov.appendChild(c);
+  }
+  host.appendChild(ov);
+  setTimeout(() => ov.remove(), dur + 300);
+}
+pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
+
+// 站点 hover 光线(Kimi RecruitmentMap 参数移植):三条光线 + 绿色像素端点,级联 110ms
+(function () {
+  const NS = "http://www.w3.org/2000/svg";
+  document.querySelectorAll(".pstation").forEach((st) => {
+    const svg = document.createElementNS(NS, "svg");
+    svg.setAttribute("class", "pstation__rays");
+    svg.setAttribute("viewBox", "0 0 140 86");
+    svg.setAttribute("aria-hidden", "true");
+    [[18, 26], [70, 6], [122, 26]].forEach(([x, y], i) => {
+      const g = document.createElementNS(NS, "g");
+      g.style.setProperty("--rd", i * 110 + "ms");
+      const l = document.createElementNS(NS, "line");
+      l.setAttribute("x1", "70"); l.setAttribute("y1", "86");
+      l.setAttribute("x2", x); l.setAttribute("y2", y);
+      l.setAttribute("pathLength", "1");
+      const r = document.createElementNS(NS, "rect");
+      r.setAttribute("x", x - 4); r.setAttribute("y", y - 4);
+      r.setAttribute("width", "8"); r.setAttribute("height", "8");
+      g.appendChild(l); g.appendChild(r);
+      svg.appendChild(g);
+    });
+    st.appendChild(svg);
+  });
+})();
+
 // case file viewer:卡片打开浮层;Esc / 点背景 / 关闭按钮三条路径关闭;#case-xxx 深链
 (function () {
   document.querySelectorAll("[data-open-case]").forEach((btn) => {
@@ -456,6 +500,7 @@
       const d = document.getElementById("case-" + btn.dataset.openCase);
       if (!d) return;
       d.showModal();
+      pixelDissolve(d, { dur: 380 }); // 浮层以像素溶解方式显影
       history.replaceState(null, "", "#case-" + btn.dataset.openCase);
     });
   });
@@ -502,7 +547,7 @@
     if (shown < total) setTimeout(tick, step);
   }
   lede.innerHTML = '<span class="caret"></span>';
-  setTimeout(tick, 350);
+  setTimeout(tick, 680); /* 等首屏像素溶解完成 */
 })();
 
 // C · 乱码解码:卡片标题与三个大数首次进入视口时翻牌落定(约 0.5s,只播一次)

@@ -147,7 +147,9 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
   text-transform: uppercase;
   color: var(--color-neutral);
   margin-bottom: var(--space-lg);
+  animation: hint-pulse 2.4s ease-in-out infinite; /* Kimi: 50% opacity .5 */
 }
+@keyframes hint-pulse { 50% { opacity: 0.5; } }
 .pmap__track {
   position: relative;
   display: grid;
@@ -193,9 +195,62 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
 .pstation:focus-visible .pstation__node {
   background: var(--color-accent);
   border-color: var(--color-accent);
-  animation: px-blink 0.8s steps(2) infinite;
 }
-@keyframes px-blink { 50% { background: var(--color-paper); } }
+
+/* hover 光线放射 —— Kimi RecruitmentMap 原始参数移植 */
+.pstation__rays {
+  position: absolute;
+  top: -72px;
+  left: 50%;
+  margin-left: -70px;
+  width: 140px;
+  height: 86px;
+  pointer-events: none;
+  overflow: visible;
+  opacity: 0;
+}
+.pstation:hover .pstation__rays,
+.pstation:focus-visible .pstation__rays { opacity: 1; }
+.pstation__rays line {
+  stroke: var(--color-ink);
+  stroke-width: 2;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.pstation__rays rect {
+  fill: var(--color-accent);
+  opacity: 0;
+  transform: scale(0.35);
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.pstation:hover .pstation__rays line,
+.pstation:focus-visible .pstation__rays line {
+  animation: ray-reveal 0.62s cubic-bezier(0.16, 1, 0.3, 1) var(--rd, 0ms) forwards;
+}
+.pstation:hover .pstation__rays rect,
+.pstation:focus-visible .pstation__rays rect {
+  animation: ray-endpoint 0.26s cubic-bezier(0.16, 1, 0.3, 1) calc(var(--rd, 0ms) + 300ms) forwards;
+}
+@keyframes ray-reveal { to { stroke-dashoffset: 0; } }
+@keyframes ray-endpoint { to { opacity: 1; transform: scale(1); } }
+
+/* 像素溶解转场 —— Kimi 场景切换机制重写 */
+.dissolve {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(14, 1fr);
+  grid-template-rows: repeat(10, 1fr);
+  pointer-events: none;
+  z-index: 5;
+}
+.dissolve--page { position: fixed; z-index: 999; }
+.dissolve i {
+  background: var(--color-paper);
+  animation: cell-off 1ms steps(1) forwards; /* 每格在各自 delay 瞬时熄灭 */
+}
+@keyframes cell-off { to { opacity: 0; } }
 .pstation__city { margin-top: var(--space-xs); font-size: var(--text-sm); color: var(--color-ink); }
 .pstation__org { font-size: var(--text-xs); color: var(--color-neutral); line-height: 1.5; }
 .pstation__stat {
@@ -614,6 +669,7 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
   }
   .pstation { flex-direction: row; align-items: center; gap: var(--space-sm); text-align: left; }
   .pstation__stat { opacity: 1; margin-inline-start: auto; } /* 触屏直接显示数据 */
+  .pstation__rays { display: none; } /* 触屏无 hover,数据已常显;光线仅桌面 */
   .stats { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-lg); }
   .stat { padding-inline: 0; }
   .stat + .stat { border-inline-start: none; border-top: var(--rule-hairline); padding-top: var(--space-lg); }
@@ -636,8 +692,10 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
   .reveal { animation: reveal-reduced 150ms linear forwards; }
   .fade { opacity: 1; transform: none; }
   .caret { animation: none; }
-  .pstation:hover .pstation__node, .pstation:focus-visible .pstation__node { animation: none; }
   .pstation__stat { opacity: 1; }
+  .pmap__hint { animation: none; }
+  .pstation__rays line { animation: none; stroke-dashoffset: 0; }
+  .pstation__rays rect { animation: none; opacity: 1; transform: none; }
   html { scroll-behavior: auto; }
   @keyframes reveal-reduced { to { opacity: 1; transform: none; } }
 }
