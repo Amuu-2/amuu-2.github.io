@@ -10,181 +10,103 @@
 </head>
 <body>
 
-<nav class="console" aria-label="主导航">
-  <a class="console__brand" href="#top">张理牧</a>
-  <span class="console__spacer"></span>
-  <a class="console__link" href="#experience">经历</a>
-  <a class="console__link" href="#project">项目</a>
-  <a class="console__cta" href="mailto:0253700878@shisu.edu.cn">联系我</a>
-</nav>
+<header class="hud">
+  <span><b>PLAYER:</b> 张理牧</span><span class="sep">│</span>
+  <span class="lv hud--wide">LV.4 产品实习生</span><span class="sep hud--wide">│</span>
+  <span class="hud--wide">STATUS: <b>可立即到岗</b></span><span class="sep hud--wide">│</span>
+  <span class="hud--wide">BASE: 上海</span>
+  <span class="spacer"></span>
+  <a class="hud__btn" href="mailto:0253700878@shisu.edu.cn">联系我</a>
+</header>
 
 <main id="top">
-  <section class="hero">
-    <div class="hero__grid">
-      <div>
-        <span class="eyebrow">PRODUCT INTERN · ZLM-04</span>
-        <h1 class="hero__title">把想法,<em>做成</em>&#8288;能上线的产品。</h1>
-        <p class="hero__lede" id="lede">四段实习:直播间、十万人社区、AI 医疗产品、出海增长。每一段,都有可验证的数字。</p>
+
+  <section class="char" aria-label="角色面板">
+    <figure class="char__pic">
+      <span class="ck" aria-hidden="true"></span>
+      <img src="assets/portrait.png" alt="张理牧 · 像素立绘" width="396" height="410">
+      <figcaption>ZHANG LIMU</figcaption>
+    </figure>
+    <div>
+      <h1>张理牧 <span class="cls">/ 增长系 · 产品职业</span></h1>
+      <p class="char__bio" id="lede">四段实习刷了四个不同副本:直播间、十万人社区、AI 医疗产品、AI 出海增长。核心被动技能只有一个:<em>把模糊的问题,变成能上线的东西。</em></p>
+      <p class="char__origin">出身设定:上海外国语大学 · 数字经济硕士在读(2027 届)/ 上海财经大学浙江学院 · 会计学本科 / 英语六级,可作工作语言</p>
+      <div class="inv">
+        <span class="inv__lab">EQUIPMENT · 装备栏</span>
+        <div class="inv__grid">
+          <span class="inv__cell" tabindex="0">SQL<span class="inv__tip">数据分析 · Redash 看板</span></span>
+          <span class="inv__cell" tabindex="0">Stata<span class="inv__tip">统计分析</span></span>
+          <span class="inv__cell" tabindex="0">Figma<span class="inv__tip">产品设计 · 墨刀 / Stitch</span></span>
+          <span class="inv__cell" tabindex="0">Claude Code<span class="inv__tip">vibe coding · 本站即产出</span></span>
+          <span class="inv__cell" tabindex="0">Codex<span class="inv__tip">AI agent 工具链 · Trae / OpenClaw</span></span>
+          <span class="inv__cell" tabindex="0">EN-6<span class="inv__tip">英语六级 · 工作语言</span></span>
+        </div>
       </div>
-      <figure class="portrait">
-        <img src="assets/portrait.png" alt="张理牧 · 像素风肖像" width="396" height="410">
-        <figcaption>ZLM · 张理牧</figcaption>
-      </figure>
-    </div>
-
-    <div class="pmap">
-      <p class="pmap__hint">四段实习,一张地图 —— 点击站点查看每段产出</p>
-      <div class="pmap__track">
-        <button class="pstation" type="button" data-open-case="kuaile">
-          <span class="pstation__node" aria-hidden="true"></span>
-          <span class="pstation__city">杭州 · 2025.3</span>
-          <span class="pstation__org">块乐 · 直播电商</span>
-          <span class="pstation__stat">利润款 +30%</span>
-        </button>
-        <button class="pstation" type="button" data-open-case="hupu">
-          <span class="pstation__node" aria-hidden="true"></span>
-          <span class="pstation__city">上海 · 2025.7</span>
-          <span class="pstation__org">虎扑 · 策略运营</span>
-          <span class="pstation__stat">日均回复 10w+</span>
-        </button>
-        <button class="pstation" type="button" data-open-case="angel">
-          <span class="pstation__node" aria-hidden="true"></span>
-          <span class="pstation__city">上海 · 2025.11</span>
-          <span class="pstation__org">时代天使 · AI 产品</span>
-          <span class="pstation__stat">核心功能 +70%</span>
-        </button>
-        <button class="pstation" type="button" data-open-case="liblib">
-          <span class="pstation__node" aria-hidden="true"></span>
-          <span class="pstation__city">北京 · 2026.5</span>
-          <span class="pstation__org">LibLib AI · 海外增长</span>
-          <span class="pstation__stat">CPC -30%</span>
-        </button>
-      </div>
-    </div>
-
-    <ul class="hero__meta">
-      <li>上海</li>
-      <li>上海外国语大学 · 数字经济硕士在读(2027 届)</li>
-      <li>可立即到岗 · 6 个月 · 每周 5 天</li>
-    </ul>
-    <p class="run-label">RUN</p>
-    <a class="runbox" href="mailto:0253700878@shisu.edu.cn?subject=面试邀约">
-      <span class="runbox__prompt">$</span>mail zhanglimu -s "面试邀约"<span class="caret" aria-hidden="true"></span>
-    </a>
-  </section>
-
-  <section class="stats" aria-label="核心数据">
-    <div class="stat fade" style="--i:0"><b>+70%</b><span class="stat__label">工作台核心功能使用 · AB 实验 · 时代天使</span></div>
-    <div class="stat fade" style="--i:1"><b>10w+</b><span class="stat__label">日均社区回复量 · 虎扑篮球板块</span></div>
-    <div class="stat fade" style="--i:2"><b>-30%</b><span class="stat__label">海外投放 CPC 与注册成本 · LibLib AI</span></div>
-  </section>
-
-  <section class="section" id="experience">
-    <span class="eyebrow fade" style="--i:0">$ CAT EXPERIENCE.LOG</span>
-    <h2 class="fade" style="--i:1">四段实习,一条递进的线。</h2>
-    <p class="section__lede fade" style="--i:2">从电商运营、社区策略,到 AI 产品与海外增长——能力沿一条线递进,顺序不是巧合。</p>
-    <ol class="cards">
-      <li class="card fade" style="--i:0">
-        <span class="card__date">2025.3 – 2025.7</span>
-        <h3>商品分层与排品策略</h3>
-        <p class="card__org">块乐互动传媒(杭州)· 直播电商策略运营实习生</p>
-        <div class="card__body">
-          <p>负责 50+ SKU 直播间商品池管理。基于销量、利润率与点击数据,将商品划分为引流款、利润款、潜力款三层,并据此优化出场顺序与上架配置,提升高利润商品曝光效率。</p>
-        </div>
-        <p class="card__proof">利润款销售额 <b>+30%</b> · 店铺点击率 <b>+40%</b></p>
-        <button class="card__open" type="button" data-open-case="kuaile">$ open kuaile.case -&gt;</button>
-      </li>
-      <li class="card fade" style="--i:1">
-        <span class="card__date">2025.7 – 2025.9</span>
-        <h3>社区内容策略与互动功能</h3>
-        <p class="card__org">虎扑 · 篮球板块 · 策略运营实习生</p>
-        <div class="card__body">
-          <p>围绕 NBA/CBA/FIBA 赛事节点制定每日首页推流策略,复盘推流效果并沉淀选帖标准;基于用户行为洞察向产品团队提出"赛事临时聊天室"功能,按球队与共同关注场次匹配用户,上线后参与率约 80%,沉默用户参与率约 70%。</p>
-        </div>
-        <p class="card__proof">日均回复量 <b>10w+</b> · 聊天室参与率 <b>~80%</b></p>
-        <button class="card__open" type="button" data-open-case="hupu">$ open hupu.case -&gt;</button>
-      </li>
-      <li class="card fade" style="--i:2">
-        <span class="card__date">2025.11 – 2026.2</span>
-        <h3>产品改版与数据验证</h3>
-        <p class="card__org">时代天使 · iortho 软件部门 · AI 产品实习生</p>
-        <div class="card__body">
-          <p>参与医生端 2026 版本改版:从用户反馈与数据中拆解出病例筛选、通知分层两项优化需求并推动落地;基于 Redash 以 SQL 搭建四维数据看板支撑迭代决策;同期参与 MOOELI 患者端 App 改版需求梳理。</p>
-        </div>
-        <p class="card__proof">核心功能使用 <b>+70%</b> · AB 实验验证</p>
-        <button class="card__open" type="button" data-open-case="angel">$ open angelalign.case -&gt;</button>
-      </li>
-      <li class="card fade" style="--i:3">
-        <span class="card__date">2026.5 – 2026.8</span>
-        <h3>海外投放与增长策略</h3>
-        <p class="card__org">LibLib AI(北京演语科技)· 增长中台 · 海外增长策略实习生</p>
-        <div class="card__body">
-          <p>负责 LibLib、Lovart、LibTV 的海外投放(Google/TikTok/Meta)。针对"注册量可观但激活率低"的问题,以生图与导出数据为质量标准重构关键词体系,并重启竞品词计划,将预算从低效流量集中至真实使用人群。</p>
-        </div>
-        <p class="card__proof">CPC <b>-30%</b> · 注册成本 <b>-30%</b> · 付费 ROI 高于账户均值</p>
-        <button class="card__open" type="button" data-open-case="liblib">$ open liblib.case -&gt;</button>
-      </li>
-    </ol>
-  </section>
-
-  <section class="section" id="project">
-    <span class="eyebrow fade" style="--i:0">$ CAT AGENT-PROJECT.MD</span>
-    <h2 class="fade" style="--i:1">AI 医疗智能问答助手</h2>
-    <p class="section__lede fade" style="--i:2">时代天使 · 产品执行(AI 方向)</p>
-    <div class="project-panel fade" style="--i:3">
-      <p>面向医生、患者与内部业务人员的正畸诊疗问答助手,目标是降低信息查找成本。我负责的不是"接一个大模型",而是把它变成可控的产品:</p>
-      <p class="flow" aria-label="Agent 工作流">意图识别 <span class="arrow">-&gt;</span> 知识检索 <span class="arrow">-&gt;</span> 答案生成 <span class="arrow">-&gt;</span> 风险校验 <span class="arrow">-&gt;</span> 追问澄清</p>
-      <p>模型选型:三轮控制变量实验对比通义千问与 GPT 的准确性、稳定性与安全边界。针对模糊问题与高风险回答加入边界提示与免责声明;围绕产品文档设计多场景 Prompt 模板,覆盖功能解释、流程指引、问题排查、销售支持与风险提示。</p>
     </div>
   </section>
 
-  <section class="section" id="profile">
-    <span class="eyebrow fade" style="--i:0">$ CAT PROFILE.INI</span>
-    <h2 class="fade" style="--i:1">教育与技能</h2>
-    <dl class="spec-rows fade" style="--i:2">
-      <div class="row">
-        <dt>教育</dt>
-        <dd>上海外国语大学 · 数字经济 · 硕士研究生</dd>
+  <section class="world" aria-label="经历地图:四段实习,点击关卡查看产出">
+    <div class="world__canvas">
+      <span class="world__title">WORLD MAP · 点击关卡查看产出</span>
+      <div class="stars" aria-hidden="true">
+        <i style="left:12%; top:18%"></i><i style="left:26%; top:55%"></i><i style="left:43%; top:13%"></i>
+        <i style="left:57%; top:66%"></i><i style="left:69%; top:32%"></i><i style="left:85%; top:14%"></i>
+        <i style="left:93%; top:46%"></i><i style="left:8%; top:72%"></i><i style="left:37%; top:82%"></i>
       </div>
-      <div class="row">
-        <dt></dt>
-        <dd>上海财经大学浙江学院 · 会计学 · 本科</dd>
-      </div>
-      <div class="row">
-        <dt>数据分析</dt>
-        <dd>SQL · Stata · Redash 数据看板</dd>
-      </div>
-      <div class="row">
-        <dt>产品设计</dt>
-        <dd>Figma · 墨刀 · Stitch</dd>
-      </div>
-      <div class="row">
-        <dt>AI 工具</dt>
-        <dd>Claude Code · Codex · Trae · OpenClaw<span class="sub">有 vibe coding 经验,能独立根据需求产出产品——这个网站就是证明之一。</span></dd>
-      </div>
-      <div class="row">
-        <dt>语言</dt>
-        <dd>英语六级,可作为工作语言</dd>
-      </div>
-    </dl>
+      <svg class="path path--d" aria-hidden="true" viewBox="0 0 1200 620" preserveAspectRatio="none">
+        <polyline points="85,505 335,180 615,470 855,200 1070,535"/>
+      </svg>
+      <svg class="path path--m" aria-hidden="true" viewBox="0 0 400 960" preserveAspectRatio="none">
+        <polyline points="48,145 190,330 50,520 192,710 62,905"/>
+      </svg>
+      <span class="mt mt--1" aria-hidden="true"></span>
+      <span class="mt mt--2" aria-hidden="true"></span>
+
+      <button class="stage stage--1" type="button" data-open-case="kuaile">
+        <span class="stage__flag" aria-hidden="true"><span class="stage__pole"></span><span class="stage__cloth"></span></span>
+        <span class="stage__sign"><span class="no">STAGE 1 · 杭州 2025.3</span><span class="co">块乐 · 直播电商策略运营</span><br><span class="num">利润款 +30%</span></span>
+      </button>
+      <button class="stage stage--2" type="button" data-open-case="hupu">
+        <span class="stage__flag" aria-hidden="true"><span class="stage__pole"></span><span class="stage__cloth"></span></span>
+        <span class="stage__sign"><span class="no">STAGE 2 · 上海 2025.7</span><span class="co">虎扑 · 策略运营</span><br><span class="num">日均回复 10w+</span></span>
+      </button>
+      <button class="stage stage--3" type="button" data-open-case="angel">
+        <span class="stage__flag" aria-hidden="true"><span class="stage__pole"></span><span class="stage__cloth"></span></span>
+        <span class="stage__sign"><span class="no">STAGE 3 · 上海 2025.11</span><span class="co">时代天使 · AI 产品</span><br><span class="num">核心功能 +70%</span></span>
+      </button>
+      <button class="stage stage--4" type="button" data-open-case="liblib">
+        <span class="stage__flag" aria-hidden="true"><span class="stage__pole"></span><span class="stage__cloth"></span></span>
+        <span class="stage__sign"><span class="no">STAGE 4 · 北京 2026.5</span><span class="co">LibLib AI · 海外增长</span><br><span class="num">CPC -30%</span></span>
+      </button>
+      <span class="stage stage--5 stage--locked" aria-label="第五关未解锁">
+        <span class="stage__flag" aria-hidden="true"><span class="stage__pole"></span><span class="stage__cloth"></span></span>
+        <span class="stage__sign"><span class="no">STAGE 5 · ????</span><span class="co">未解锁</span></span>
+      </span>
+    </div>
+    <div class="exp">
+      <span>EXP</span>
+      <span class="exp__bar" aria-hidden="true"><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i class="on"></i><i></i><i></i></span>
+      <span>2025.3 → NOW</span>
+    </div>
+  </section>
+
+  <section class="continue">
+    <h2>STAGE 5 等待载入<span class="caret" aria-hidden="true"></span></h2>
+    <p>第五段数字,正在写。下一关的地图,由你的公司决定。</p>
+    <a class="continue__coin" href="mailto:0253700878@shisu.edu.cn?subject=面试邀约">→ 邀请加入队伍</a>
   </section>
 </main>
 
-<footer class="foot-statement">
-  <p class="foot-statement__line fade" style="--i:0">第五段数字,<em>正在写</em>。</p>
-  <p class="foot-statement__meta">
-    <a href="mailto:0253700878@shisu.edu.cn">0253700878@shisu.edu.cn</a>
-    <span>电话 19519875185</span>
-    <span>上海 · 2026</span>
-  </p>
+<footer>
+  <p class="foot-meta"><a href="mailto:0253700878@shisu.edu.cn">0253700878@shisu.edu.cn</a> · 电话 19519875185 · 上海 · 2026</p>
 </footer>
 
 <!-- ============ case file viewer · 终端式案例浮层 ============ -->
 
 <dialog class="case" id="case-kuaile" data-case="kuaile" aria-label="块乐直播电商案例详情">
   <div class="case__bar">
-    <span>$ open kuaile.case</span>
-    <button class="case__close" type="button">ESC 关闭</button>
+    <span><span class="np">▣</span>STAGE 1 · 块乐 · 直播电商</span>
+    <button class="case__close" type="button">✕ ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -251,8 +173,8 @@
 
 <dialog class="case" id="case-hupu" data-case="hupu" aria-label="虎扑篮球社区案例详情">
   <div class="case__bar">
-    <span>$ open hupu.case</span>
-    <button class="case__close" type="button">ESC 关闭</button>
+    <span><span class="np">▣</span>STAGE 2 · 虎扑 · 策略运营</span>
+    <button class="case__close" type="button">✕ ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -313,8 +235,8 @@
 
 <dialog class="case" id="case-liblib" data-case="liblib" aria-label="LibLib AI 海外投放案例详情">
   <div class="case__bar">
-    <span>$ open liblib.case</span>
-    <button class="case__close" type="button">ESC 关闭</button>
+    <span><span class="np">▣</span>STAGE 4 · LibLib AI · 海外增长</span>
+    <button class="case__close" type="button">✕ ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -376,8 +298,8 @@
 
 <dialog class="case" id="case-angel" data-case="angel" aria-label="时代天使案例详情">
   <div class="case__bar">
-    <span>$ open angelalign.case</span>
-    <button class="case__close" type="button">ESC 关闭</button>
+    <span><span class="np">▣</span>STAGE 3 · 时代天使 · AI 产品</span>
+    <button class="case__close" type="button">✕ ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -475,31 +397,6 @@ function pixelDissolve(host, opts) {
 }
 pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
 
-// 站点 hover 光线(Kimi RecruitmentMap 参数移植):三条光线 + 绿色像素端点,级联 110ms
-(function () {
-  const NS = "http://www.w3.org/2000/svg";
-  document.querySelectorAll(".pstation").forEach((st) => {
-    const svg = document.createElementNS(NS, "svg");
-    svg.setAttribute("class", "pstation__rays");
-    svg.setAttribute("viewBox", "0 0 140 86");
-    svg.setAttribute("aria-hidden", "true");
-    [[18, 26], [70, 6], [122, 26]].forEach(([x, y], i) => {
-      const g = document.createElementNS(NS, "g");
-      g.style.setProperty("--rd", i * 110 + "ms");
-      const l = document.createElementNS(NS, "line");
-      l.setAttribute("x1", "70"); l.setAttribute("y1", "86");
-      l.setAttribute("x2", x); l.setAttribute("y2", y);
-      l.setAttribute("pathLength", "1");
-      const r = document.createElementNS(NS, "rect");
-      r.setAttribute("x", x - 4); r.setAttribute("y", y - 4);
-      r.setAttribute("width", "8"); r.setAttribute("height", "8");
-      g.appendChild(l); g.appendChild(r);
-      svg.appendChild(g);
-    });
-    st.appendChild(svg);
-  });
-})();
-
 // case file viewer:卡片打开浮层;Esc / 点背景 / 关闭按钮三条路径关闭;#case-xxx 深链
 (function () {
   document.querySelectorAll("[data-open-case]").forEach((btn) => {
@@ -557,56 +454,6 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
   setTimeout(tick, 680); /* 等首屏像素溶解完成 */
 })();
 
-// C · 乱码解码:卡片标题与三个大数首次进入视口时翻牌落定(约 0.5s,只播一次)
-(function () {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
-  const CJK_POOL = "アイウエオカキクケコサシスセソ█▓▒◆※";
-  const NUM_POOL = "0123456789#$%*+<>";
-  function scramble(el) {
-    const target = el.dataset.orig;
-    const pool = /[一-鿿]/.test(target) ? CJK_POOL : NUM_POOL;
-    const chars = [...target];
-    const dur = 520;
-    const start = performance.now();
-    function frame(now) {
-      const t = Math.min(1, (now - start) / dur);
-      const settled = Math.floor(t * chars.length);
-      el.textContent = chars.map((c, i) =>
-        i < settled || /\s/.test(c) ? c : pool[(i * 7 + Math.floor(now / 40)) % pool.length]
-      ).join("");
-      if (t < 1) requestAnimationFrame(frame);
-      else el.textContent = target;
-    }
-    requestAnimationFrame(frame);
-  }
-  const targets = document.querySelectorAll(".card h3, .stat b");
-  targets.forEach((el) => {
-    el.dataset.orig = el.textContent;
-    el.setAttribute("aria-label", el.textContent); // 屏幕阅读器始终读原文
-  });
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) { scramble(e.target); io.unobserve(e.target); }
-    }
-  }, { rootMargin: "0px 0px -10% 0px" });
-  targets.forEach((el) => io.observe(el));
-})();
-
-// 段落一次性 fade-up;reduced-motion 直接显示
-(function () {
-  const mq = matchMedia("(prefers-reduced-motion: reduce)");
-  const targets = document.querySelectorAll(".fade");
-  if (mq.matches || !("IntersectionObserver" in window)) {
-    targets.forEach((t) => t.classList.add("is-in"));
-    return;
-  }
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); }
-    }
-  }, { rootMargin: "0px 0px -8% 0px" });
-  targets.forEach((t) => io.observe(t));
-})();
 </script>
 
 </body>
