@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>方向 B/C 演示 · 人声文案与活人痕迹</title>
+<link rel="preload" href="fonts/fusion-pixel-subset.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css">
+<style>
+  .dp-wrap { max-width: 60rem; margin-inline: auto; padding: var(--space-2xl) var(--page-gutter) var(--space-3xl); }
+  .dp-wrap h1 { font-size: var(--text-xl); }
+  .dp-head-note { color: var(--color-neutral); font-size: var(--text-sm); margin-top: var(--space-xs); max-width: 70ch; }
+  .dp-panel { border: 2px solid var(--color-rule); padding: var(--space-xl); margin-top: var(--space-2xl); }
+  .dp-panel > .tag {
+    font-family: var(--font-mono); font-size: var(--text-sm);
+    letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-accent);
+  }
+  .dp-panel h2 { font-size: var(--text-lg); margin-top: var(--space-xs); }
+  .dp-desc { color: var(--color-neutral); font-size: var(--text-sm); margin-top: var(--space-xs); max-width: 70ch; line-height: 1.9; }
+
+  /* B · 前后对照 */
+  .dp-vs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-lg); margin-top: var(--space-lg); }
+  .dp-col { border: 1px solid var(--color-rule); padding: var(--space-lg); min-width: 0; }
+  .dp-col--after { border-color: var(--color-accent); }
+  .dp-col .lab { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral); display: block; margin-bottom: var(--space-sm); }
+  .dp-col--after .lab { color: var(--color-accent); }
+  .dp-col .big { font-size: var(--text-lg); color: var(--color-ink); line-height: 1.5; max-width: none; }
+  .dp-col .body { margin-top: var(--space-md); font-size: var(--text-sm); line-height: 1.95; color: var(--color-ink-2); max-width: none; }
+  .dp-col .body em { font-style: normal; color: var(--color-accent); }
+  .dp-qs { margin-top: var(--space-lg); border-top: var(--rule-hairline); padding-top: var(--space-lg); }
+  .dp-qs ol { margin: var(--space-sm) 0 0; padding-left: 1.5em; font-size: var(--text-sm); line-height: 2.1; color: var(--color-ink-2); }
+
+  /* C · changelog + NOW */
+  .dp-log { margin-top: var(--space-lg); border: 1px solid var(--color-rule); padding: var(--space-lg); }
+  .dp-log-row { display: grid; grid-template-columns: 4.5em minmax(0, 1fr); gap: var(--space-md); padding-block: var(--space-xs); font-size: var(--text-sm); }
+  .dp-log-row + .dp-log-row { border-top: 1px solid var(--color-paper-2); }
+  .dp-log-row .d { font-family: var(--font-mono); color: var(--color-accent); }
+  .dp-log-row .m { color: var(--color-ink-2); overflow-wrap: anywhere; }
+  .dp-now { margin-top: var(--space-lg); border: 1px solid var(--color-rule); padding: var(--space-lg); }
+  .dp-now .row { display: flex; gap: var(--space-sm); align-items: baseline; padding-block: var(--space-2xs); font-size: var(--text-sm); }
+  .dp-now .k { font-family: var(--font-mono); font-size: var(--text-xs); letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-neutral); flex: none; width: 5em; }
+  .dp-draft { display: inline-block; margin-top: var(--space-sm); border: 1px dashed var(--color-neutral); padding: 2px 8px; font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-neutral); }
+
+  @media (max-width: 40rem) { .dp-vs { grid-template-columns: minmax(0, 1fr); } }
+</style>
+</head>
+<body>
+<div class="dp-wrap">
+  <h1>方向 B / C 演示</h1>
+  <p class="dp-head-note">demo 草稿,不影响正式页。方向 A(换骨架)是完整原型,在 <a href="variant-a.html">variant-a.html</a> 单独一页。</p>
+
+  <section class="dp-panel">
+    <span class="tag">方向 B · 人声文案</span>
+    <h2>同样的内容,slogan 体 vs 人声体</h2>
+    <p class="dp-desc">右栏是"语气示范"——内容从你简历事实合理推演,但真正的人声只有你能给。看完对照,回答底部 5 个问题(大白话即可,每题一两句),我把你的真话织进页面。</p>
+    <div class="dp-vs">
+      <div class="dp-col">
+        <span class="lab">现状 · slogan 体(AI 最爱的句式)</span>
+        <p class="big">把想法,做成能上线的产品。</p>
+        <p class="body">四段实习:直播间、十万人社区、AI 医疗产品、出海增长。每一段,都有可验证的数字。</p>
+      </div>
+      <div class="dp-col dp-col--after">
+        <span class="lab">人声体 · 语气示范(待你的真话替换)</span>
+        <p class="big">我是张理牧,一个把问题做成产品的人。</p>
+        <p class="body">本科学会计,毕业后没去事务所,一头扎进了直播间。四份实习换了四个行业,我上瘾的事情始终只有一件:<em>把模糊的问题,变成能上线的东西。</em>数字不会说谎,所以这个网站里每个数字都能被面试官盘问。</p>
+      </div>
+    </div>
+    <div class="dp-qs">
+      <span class="lab" style="font-family:var(--font-mono); font-size:var(--text-xs); letter-spacing:0.08em; text-transform:uppercase; color:var(--color-neutral)">供料问题 · 用大白话答,一两句就够</span>
+      <ol>
+        <li>为什么从会计转产品?那个转折点发生了什么?</li>
+        <li>四段实习里,哪个决策瞬间最难?你当时怎么选的?</li>
+        <li>最得意的一个小细节是什么?(不是最大的成果,是最得意的)</li>
+        <li>搞砸过什么?学到了什么?</li>
+        <li>下一段,你最想做什么样的事?</li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="dp-panel">
+    <span class="tag">方向 C · 活人痕迹</span>
+    <h2>让页面看起来是"长出来的",不是"生成的"</h2>
+    <p class="dp-desc">两个组件,第一个的数据是<b style="color:var(--color-ink)">真的</b>——你这个网站真实的 git 提交记录。它同时证明三件事:网站是你亲手迭代的、你真的会用 AI 编程工具、你有产品人的迭代习惯。</p>
+
+    <div class="dp-log">
+      <span class="lab" style="font-family:var(--font-mono); font-size:var(--text-xs); letter-spacing:0.08em; text-transform:uppercase; color:var(--color-accent)">CHANGELOG · 本站由我 vibe coding 构建,以下是真实提交记录</span>
+      <div style="margin-top: var(--space-sm)">
+        <div class="dp-log-row"><span class="d">08.01</span><span class="m">首屏加入像素风个人肖像</span></div>
+        <div class="dp-log-row"><span class="d">08.01</span><span class="m">移植 Kimi 动效:hover 光线放射 + 像素溶解转场 + pulse 呼吸</span></div>
+        <div class="dp-log-row"><span class="d">08.01</span><span class="m">全站重构为黑白像素风,自托管中文像素字体(22.9KB 子集)</span></div>
+        <div class="dp-log-row"><span class="d">08.01</span><span class="m">LibLib 实习经历补齐:CPC/注册成本 -30%,新增案例浮层</span></div>
+        <div class="dp-log-row"><span class="d">07.23</span><span class="m">实习文案去口语化;加入乱码解码与打字机微交互</span></div>
+        <div class="dp-log-row"><span class="d">07.23</span><span class="m">v5:磷绿 CRT 终端主题 + 四个公司风格案例浮层</span></div>
+      </div>
+    </div>
+
+    <div class="dp-now">
+      <span class="lab" style="font-family:var(--font-mono); font-size:var(--text-xs); letter-spacing:0.08em; text-transform:uppercase; color:var(--color-accent)">NOW · 最近在忙</span>
+      <div style="margin-top: var(--space-sm)">
+        <div class="row"><span class="k">在做</span><span>LibLib 海外投放的季度复盘</span></div>
+        <div class="row"><span class="k">在学</span><span>Agent 工作流设计 / 秋招准备中</span></div>
+        <div class="row"><span class="k">在玩</span><span>用 Claude Code 迭代这个网站</span></div>
+      </div>
+      <span class="dp-draft">内容占位 · 等你的真实近况替换,建议每月手动更新一次</span>
+    </div>
+  </section>
+</div>
+</body>
+</html>
