@@ -714,6 +714,13 @@ a:focus-visible {
 .msg__line:first-child { margin-top: 3px; }
 .pipeline { display: flex; gap: var(--space-2xs); align-items: center; flex-wrap: wrap; }
 
+/* liblib · 使用漏斗 */
+.fn { display: flex; gap: var(--space-sm); align-items: end; margin-top: var(--space-md); }
+.fn-step { flex: 1; min-width: 0; text-align: center; font-size: var(--text-xs); color: var(--case-muted); }
+.fn-step i { display: block; background: var(--case-surface-2); border-radius: 4px; margin-bottom: var(--space-2xs); }
+.fn-step--hot i { background: var(--case-accent-soft); border: 1px solid var(--case-accent); }
+.fn-step--hot { color: var(--case-accent); font-weight: 500; }
+
 /* angel · 四维看板 */
 .dash { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-sm); }
 .dash__card { border: 1px solid var(--case-surface-2); border-radius: 6px; padding: var(--space-sm); }

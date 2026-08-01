@@ -103,6 +103,15 @@
   --case-accent-soft: oklch(51% 0.19 27 / 0.10);
   --case-accent-ink:  oklch(98% 0.004 25);
 }
+[data-case="liblib"] {
+  --case-surface:     oklch(98% 0.004 15);
+  --case-surface-2:   oklch(93% 0.008 15);
+  --case-ink:         oklch(24% 0.015 15);
+  --case-muted:       oklch(51% 0.015 15);
+  --case-accent:      oklch(56% 0.19 15);           /* LibLib 品牌红粉 */
+  --case-accent-soft: oklch(56% 0.19 15 / 0.10);
+  --case-accent-ink:  oklch(98% 0.004 15);
+}
 [data-case="angel"] {
   --case-surface:     oklch(98% 0.005 240);
   --case-surface-2:   oklch(93% 0.010 238);
