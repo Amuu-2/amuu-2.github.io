@@ -5,16 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>张理牧 · 产品实习生</title>
 <meta name="description" content="张理牧 —— 产品实习生。四段实习:直播电商、体育社区、AI 医疗产品、海外增长,每一段都留下可验证的数字。">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;900&family=VT323&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/fusion-pixel-subset.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <nav class="console" aria-label="主导航">
-  <a class="console__brand" href="#top"><span class="console__prompt">~/</span>张理牧</a>
-  <span class="console__doc">DOSSIER · ZLM-04 · SHANGHAI</span>
+  <a class="console__brand" href="#top">张理牧</a>
   <span class="console__spacer"></span>
   <a class="console__link" href="#experience">经历</a>
   <a class="console__link" href="#project">项目</a>
@@ -23,57 +20,50 @@
 
 <main id="top">
   <section class="hero">
-    <span class="regmark" data-pos="tl" aria-hidden="true"></span>
-    <span class="regmark" data-pos="tr" aria-hidden="true"></span>
-    <span class="regmark" data-pos="bl" aria-hidden="true"></span>
-    <span class="regmark" data-pos="br" aria-hidden="true"></span>
-    <span class="side-label" aria-hidden="true">产品档案 · 第四号</span>
-    <aside class="titleblock" aria-label="档案信息">
-      <div><span>档案 FILE</span><span>ZLM-04</span></div>
-      <div><span>修订 REV</span><span>04 · 四段实习</span></div>
-      <div><span>日期 DATE</span><span>2026.07</span></div>
-      <div><span>状态 STATUS</span><span>可立即到岗</span></div>
-    </aside>
-    <div class="hero__grid">
-      <div>
-        <span class="eyebrow">$ WHOAMI</span>
-        <h1 class="hero__title">把想法,<em>做成</em>&#8288;能上线的产品。</h1>
-        <p class="hero__lede" id="lede">四段实习:直播间、十万人社区、AI 医疗产品、出海增长。每一段,都有可验证的数字。</p>
-        <ul class="hero__meta">
-          <li>上海</li>
-          <li>上海外国语大学 · 数字经济硕士在读(2027 届)</li>
-          <li>可立即到岗 · 6 个月 · 每周 5 天</li>
-        </ul>
-        <p class="run-label">RUN</p>
-        <a class="runbox" href="mailto:0253700878@shisu.edu.cn?subject=面试邀约">
-          <span class="runbox__prompt">$</span>mail zhanglimu -s "面试邀约"<span class="caret" aria-hidden="true"></span>
-        </a>
-      </div>
-      <figure class="apparatus" aria-hidden="true">
-        <div class="chamber">
-          <span class="chamber__electrode" style="--y: 22%"></span>
-          <span class="chamber__electrode" style="--y: 42%"></span>
-          <span class="chamber__electrode" style="--y: 62%"></span>
-          <span class="chamber__electrode" style="--y: 82%"></span>
-          <span class="chamber__filament"></span>
-          <span class="chamber__glow"></span>
-          <span class="chamber__stencil">ZLM-04</span>
-        </div>
-        <ul class="callouts">
-          <li class="callout" data-side="left"  style="--y: 16%"><span>AB EXP · +70%</span></li>
-          <li class="callout" data-side="right" style="--y: 36%"><span>DAILY REPLY · 10W+</span></li>
-          <li class="callout" data-side="left"  style="--y: 60%"><span>CPC · -30%</span></li>
-          <li class="callout" data-side="right" style="--y: 80%"><span>PROFIT GMV · +30%</span></li>
-        </ul>
-      </figure>
-    </div>
-  </section>
+    <span class="eyebrow">PRODUCT INTERN · ZLM-04</span>
+    <h1 class="hero__title">把想法,<em>做成</em>&#8288;能上线的产品。</h1>
+    <p class="hero__lede" id="lede">四段实习:直播间、十万人社区、AI 医疗产品、出海增长。每一段,都有可验证的数字。</p>
 
-  <aside class="meter" aria-label="经历读数">
-    <p class="meter__label">SIGNAL · 4 ROLES</p>
-    <div class="meter__bars" aria-hidden="true"></div>
-    <p class="meter__label">SPAN · 2025.3 → NOW</p>
-  </aside>
+    <div class="pmap">
+      <p class="pmap__hint">四段实习,一张地图 —— 点击站点查看每段产出</p>
+      <div class="pmap__track">
+        <button class="pstation" type="button" data-open-case="kuaile">
+          <span class="pstation__node" aria-hidden="true"></span>
+          <span class="pstation__city">杭州 · 2025.3</span>
+          <span class="pstation__org">块乐 · 直播电商</span>
+          <span class="pstation__stat">利润款 +30%</span>
+        </button>
+        <button class="pstation" type="button" data-open-case="hupu">
+          <span class="pstation__node" aria-hidden="true"></span>
+          <span class="pstation__city">上海 · 2025.7</span>
+          <span class="pstation__org">虎扑 · 策略运营</span>
+          <span class="pstation__stat">日均回复 10w+</span>
+        </button>
+        <button class="pstation" type="button" data-open-case="angel">
+          <span class="pstation__node" aria-hidden="true"></span>
+          <span class="pstation__city">上海 · 2025.11</span>
+          <span class="pstation__org">时代天使 · AI 产品</span>
+          <span class="pstation__stat">核心功能 +70%</span>
+        </button>
+        <button class="pstation" type="button" data-open-case="liblib">
+          <span class="pstation__node" aria-hidden="true"></span>
+          <span class="pstation__city">北京 · 2026.5</span>
+          <span class="pstation__org">LibLib AI · 海外增长</span>
+          <span class="pstation__stat">CPC -30%</span>
+        </button>
+      </div>
+    </div>
+
+    <ul class="hero__meta">
+      <li>上海</li>
+      <li>上海外国语大学 · 数字经济硕士在读(2027 届)</li>
+      <li>可立即到岗 · 6 个月 · 每周 5 天</li>
+    </ul>
+    <p class="run-label">RUN</p>
+    <a class="runbox" href="mailto:0253700878@shisu.edu.cn?subject=面试邀约">
+      <span class="runbox__prompt">$</span>mail zhanglimu -s "面试邀约"<span class="caret" aria-hidden="true"></span>
+    </a>
+  </section>
 
   <section class="stats" aria-label="核心数据">
     <div class="stat fade" style="--i:0"><b>+70%</b><span class="stat__label">工作台核心功能使用 · AB 实验 · 时代天使</span></div>
@@ -459,26 +449,6 @@
 </dialog>
 
 <script>
-// 仪表条:64 根刻度,高度取正弦 × 高斯包络(确定性,读作"测量结果"而非装饰)
-(function () {
-  const bars = document.querySelector(".meter__bars");
-  if (!bars) return;
-  const N = 64;
-  for (let i = 0; i < N; i++) {
-    const s = document.createElement("span");
-    const sine = Math.abs(Math.sin(i * 0.42) * 0.6 + Math.sin(i * 0.11) * 0.4);
-    const gauss = Math.exp(-Math.pow(i - 40, 2) / 900);
-    const h = 15 + 85 * Math.min(1, sine * 0.55 + gauss * 0.65);
-    s.style.height = h + "%";
-    s.style.opacity = (0.35 + 0.65 * (h / 100)).toFixed(2);
-    // 动态频谱:每根刻度不同周期/相位/幅度(确定性,非随机)
-    s.style.setProperty("--d", (1.6 + Math.abs(Math.sin(i * 0.73)) * 1.6).toFixed(2) + "s");
-    s.style.setProperty("--delay", (-(i % 7) * 0.23).toFixed(2) + "s");
-    s.style.setProperty("--min", (0.35 + Math.abs(Math.sin(i * 1.31)) * 0.4).toFixed(2));
-    bars.appendChild(s);
-  }
-})();
-
 // case file viewer:卡片打开浮层;Esc / 点背景 / 关闭按钮三条路径关闭;#case-xxx 深链
 (function () {
   document.querySelectorAll("[data-open-case]").forEach((btn) => {
