@@ -101,6 +101,28 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
   max-width: 72rem;
   margin-inline: auto;
 }
+.hero__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: var(--space-2xl);
+  align-items: start;
+}
+.portrait { justify-self: end; margin: 0; width: min(100%, 300px); }
+.portrait img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: var(--rule-px);
+  image-rendering: pixelated; /* 缩放时保持抖动像素硬边 */
+}
+.portrait figcaption {
+  margin-top: var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-micro);
+  text-transform: uppercase;
+  color: var(--color-neutral);
+}
 .hero__title {
   font-size: var(--text-display);
   max-width: 16ch;
@@ -652,6 +674,8 @@ a:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
 /* ---------- responsive ---------- */
 @media (max-width: 60rem) {
   .cards { grid-template-columns: minmax(0, 1fr); }
+  .hero__grid { grid-template-columns: minmax(0, 1fr); gap: var(--space-lg); }
+  .portrait { justify-self: start; width: min(60%, 240px); }
 }
 @media (max-width: 40rem) {
   .console { gap: var(--space-md); }
