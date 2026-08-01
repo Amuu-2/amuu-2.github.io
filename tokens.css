@@ -61,6 +61,8 @@
 
   --page-gutter: clamp(1.25rem, 5vw, 4rem);
   --measure: 60ch;
+  --hud-h: 60px;
+  --exp-h: 48px;
 
   /* ---- motion ---- */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

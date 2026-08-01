@@ -41,20 +41,24 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--color-focus); o
 
 /* ---------- HUD 顶栏 ---------- */
 .hud {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
+  height: var(--hud-h);
   z-index: var(--z-sticky-nav);
   display: flex;
   align-items: center;
   gap: var(--space-md);
   background: var(--color-paper);
   border-bottom: var(--rule-px);
-  padding: var(--space-sm) var(--space-md);
+  padding: 0 var(--space-md);
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   letter-spacing: 0.06em;
   white-space: nowrap;
 }
+body { padding-top: var(--hud-h); }
 .hud b { color: var(--color-ink); font-weight: 400; }
 .hud .lv { color: var(--color-accent); }
 .hud .sep { color: var(--color-rule); }
@@ -237,9 +241,10 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--color-focus); o
   display: flex;
   align-items: center;
   gap: var(--space-md);
+  height: var(--exp-h);
   max-width: 1200px;
   margin-inline: auto;
-  padding: var(--space-sm) var(--space-md);
+  padding: 0 var(--space-md);
   border-top: var(--rule-hairline);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
@@ -467,6 +472,41 @@ a:focus-visible, button:focus-visible { outline: 2px solid var(--color-focus); o
 .dash__bars { display: flex; gap: 3px; align-items: end; height: 26px; margin-top: var(--space-xs); }
 .dash__bars span { flex: 1; border-radius: 2px; background: var(--case-accent-soft); }
 .dash__bars span:nth-child(2n) { background: var(--case-accent); }
+
+/* ---------- 整屏分板块 · scroll-snap(宽 ≥64rem 且高 ≥44rem 时启用)---------- */
+.scroll-hint {
+  position: absolute;
+  bottom: var(--space-md);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--text-md);
+  color: var(--color-neutral);
+  animation: hint-pulse 2.4s ease-in-out infinite;
+  display: none; /* 仅整屏模式显示 */
+}
+@keyframes hint-pulse { 50% { opacity: 0.4; } }
+
+@media (min-width: 64rem) and (min-height: 44rem) {
+  html { scroll-snap-type: y mandatory; scroll-padding-top: var(--hud-h); }
+  .char, .world, .continue {
+    height: calc(100dvh - var(--hud-h));
+    scroll-snap-align: start;
+  }
+  .char { align-content: center; position: relative; padding-block: 0; }
+  .scroll-hint { display: block; }
+  .world { display: flex; flex-direction: column; }
+  .world__canvas { height: auto; flex: 1; min-height: 520px; width: 100%; }
+  .continue {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-block: 0;
+  }
+  .continue .foot-meta { position: absolute; bottom: var(--space-md); left: 0; right: 0; padding-bottom: 0; }
+}
 
 /* ---------- responsive ---------- */
 @media (max-width: 64rem) {
