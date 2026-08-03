@@ -430,12 +430,15 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
   let lock = false;
   function animateScroll(to, dur) {
     const from = scrollY, delta = to - from, t0 = performance.now();
-    const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2); // ease-in-out
+    const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // ease-in-out cubic
+    const root = document.documentElement;
+    root.style.scrollSnapType = "none"; // 动画期间挂起吸附,防掉帧瞬间被 snap 拽动
     return new Promise((res) => {
       (function step(now) {
         const t = Math.min(1, (now - t0) / dur);
-        scrollTo(0, from + delta * ease(t));
-        if (t < 1) requestAnimationFrame(step); else res();
+        scrollTo({ top: from + delta * ease(t), behavior: "instant" }); // 逐帧必须 instant
+        if (t < 1) requestAnimationFrame(step);
+        else { root.style.scrollSnapType = ""; res(); }
       })(t0);
     });
   }
@@ -458,8 +461,8 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
     const next = Math.min(tops.length - 1, Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)));
     if (next === cur) return;
     lock = true;
-    if (REDUCED_MOTION) scrollTo(0, tops[next]);
-    else await animateScroll(tops[next], 620);
+    if (REDUCED_MOTION) scrollTo({ top: tops[next], behavior: "instant" });
+    else await animateScroll(tops[next], 700);
     setTimeout(() => { lock = false; }, 300); // 缓冲:吃掉触控板惯性余量,防连翻
   }, { passive: false });
 })();

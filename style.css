@@ -4,7 +4,7 @@
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { overflow-x: clip; scroll-behavior: smooth; }
+html { overflow-x: clip; } /* 不设 scroll-behavior:smooth——会污染逐帧翻页动画 */
 body {
   overflow-x: clip;
   margin: 0;
