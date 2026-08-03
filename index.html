@@ -25,12 +25,11 @@
     <figure class="char__pic">
       <span class="ck" aria-hidden="true"></span>
       <img src="assets/portrait.png" alt="张理牧 · 像素立绘" width="396" height="410">
-      <figcaption>ZHANG LIMU</figcaption>
+      <figcaption>LIMU ZHANG</figcaption>
     </figure>
     <div>
       <h1>张理牧 <span class="cls">/ 增长系 · 产品职业</span></h1>
-      <p class="char__bio" id="lede">四段实习刷了四个不同副本:直播间、十万人社区、AI 医疗产品、AI 出海增长。核心被动技能只有一个:<em>把模糊的问题,变成能上线的东西。</em></p>
-      <p class="char__origin">出身设定:上海外国语大学 · 数字经济硕士在读(2027 届)/ 上海财经大学浙江学院 · 会计学本科 / 英语六级,可作工作语言</p>
+      <p class="char__origin">出身设定:上海外国语大学 · 数字经济硕士在读(2027 届)</p>
       <div class="inv">
         <span class="inv__lab">EQUIPMENT · 装备栏</span>
         <div class="inv__grid">
@@ -397,10 +396,12 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
 
 // case file viewer:卡片打开浮层;Esc / 点背景 / 关闭按钮三条路径关闭;#case-xxx 深链
 (function () {
+  let returnY = 0; // 打开浮层时记住滚动位置,关闭后原地恢复(防止吸附跳回第一屏)
   document.querySelectorAll("[data-open-case]").forEach((btn) => {
     btn.addEventListener("click", () => {
       const d = document.getElementById("case-" + btn.dataset.openCase);
       if (!d) return;
+      returnY = scrollY;
       d.showModal();
       pixelDissolve(d, { dur: 380 }); // 浮层以像素溶解方式显影
       history.replaceState(null, "", "#case-" + btn.dataset.openCase);
@@ -409,7 +410,10 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
   document.querySelectorAll("dialog.case").forEach((d) => {
     d.querySelector(".case__close").addEventListener("click", () => d.close());
     d.addEventListener("click", (e) => { if (e.target === d) d.close(); }); // 背景点击
-    d.addEventListener("close", () => history.replaceState(null, "", location.pathname + location.search));
+    d.addEventListener("close", () => {
+      history.replaceState(null, "", location.pathname + location.search);
+      requestAnimationFrame(() => scrollTo({ top: returnY, behavior: "instant" }));
+    });
   });
   const m = location.hash.match(/^#case-(\w+)$/);
   if (m) {
@@ -418,38 +422,46 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
   }
 })();
 
-// F · 打字机:hero lede 首次加载逐字打出(约 1.1s,只播一次);reduced-motion 直接显示
+// 整屏平滑翻页:滚轮一档 = 翻一整屏。注意:mandatory 吸附会取消 smooth scrollTo,
+// 因此用 rAF 逐帧 instant 定位手动做缓动;CSS 吸附保留给键盘/滚动条兜底。
 (function () {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const lede = document.getElementById("lede");
-  if (!lede) return;
-  // 结构切段:普通文本 / <em> 文本,打字时保留动词高亮
-  const segs = [];
-  lede.childNodes.forEach((n) => {
-    if (n.nodeType === 3) segs.push({ t: n.textContent, em: false });
-    else if (n.nodeName === "EM") segs.push({ t: n.textContent, em: true });
-  });
-  const total = segs.reduce((s, x) => s + x.t.length, 0);
-  lede.style.minHeight = lede.offsetHeight + "px"; // 防打字过程布局抖动
-  const step = Math.max(16, Math.floor(1100 / total));
-  let shown = 0;
-  function render() {
-    let left = shown, html = "";
-    for (const s of segs) {
-      const take = Math.max(0, Math.min(s.t.length, left));
-      left -= take;
-      const part = s.t.slice(0, take);
-      html += s.em ? (part ? "<em>" + part + "</em>" : "") : part;
+  const snapMode = matchMedia("(min-width: 64rem) and (min-height: 44rem)");
+  const names = ["char", "world", "continue"];
+  let lock = false;
+  function animateScroll(to, dur) {
+    const from = scrollY, delta = to - from, t0 = performance.now();
+    const ease = (t) => (t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2); // ease-in-out
+    return new Promise((res) => {
+      (function step(now) {
+        const t = Math.min(1, (now - t0) / dur);
+        scrollTo(0, from + delta * ease(t));
+        if (t < 1) requestAnimationFrame(step); else res();
+      })(t0);
+    });
+  }
+  addEventListener("wheel", async (e) => {
+    if (!snapMode.matches) return;
+    if (document.querySelector("dialog[open]")) {
+      // 浮层打开时:浮层内滚动放行,遮罩上的滚轮拦截(防止背景翻页)
+      if (!(e.target.closest && e.target.closest("dialog[open]"))) e.preventDefault();
+      return;
     }
-    lede.innerHTML = html + (shown < total ? '<span class="caret"></span>' : "");
-  }
-  function tick() {
-    shown++;
-    render();
-    if (shown < total) setTimeout(tick, step);
-  }
-  lede.innerHTML = '<span class="caret"></span>';
-  setTimeout(tick, 680); /* 等首屏像素溶解完成 */
+    e.preventDefault(); // 接管滚轮:锁定期与小幅抖动都不再触发原生滚动
+    if (lock || Math.abs(e.deltaY) < 8) return;
+    const hud = 60;
+    const tops = names.map((n) => {
+      const el = document.querySelector("." + n);
+      return Math.round(el.getBoundingClientRect().top + scrollY - hud);
+    });
+    let cur = 0;
+    tops.forEach((t, i) => { if (Math.abs(t - scrollY) < Math.abs(tops[cur] - scrollY)) cur = i; });
+    const next = Math.min(tops.length - 1, Math.max(0, cur + (e.deltaY > 0 ? 1 : -1)));
+    if (next === cur) return;
+    lock = true;
+    if (REDUCED_MOTION) scrollTo(0, tops[next]);
+    else await animateScroll(tops[next], 620);
+    setTimeout(() => { lock = false; }, 300); // 缓冲:吃掉触控板惯性余量,防连翻
+  }, { passive: false });
 })();
 
 </script>
