@@ -378,6 +378,90 @@ body { padding-top: var(--hud-h); }
 .dissolve i { background: var(--color-paper); animation: cell-off 1ms steps(1) forwards; }
 @keyframes cell-off { to { opacity: 0; } }
 
+/* ---------- 翻页转场(fx):遮罩层一律 fixed + 硬边 steps 推进,无渐变无圆角 ---------- */
+.fx {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+  overflow: hidden;
+}
+
+/* FX-A 百叶窗快门:6 条横栅交替从左右合拢 */
+.fx-shutter { display: grid; grid-template-rows: repeat(6, 1fr); }
+.fx-shutter i {
+  background: var(--color-paper);
+  border-top: 1px solid var(--color-rule-2);
+  transform: scaleX(0);
+  animation: shutter-in 180ms steps(6) forwards;
+}
+.fx-shutter i:nth-child(odd)  { transform-origin: left; }
+.fx-shutter i:nth-child(even) { transform-origin: right; }
+.fx-shutter--out i { transform: scaleX(1); animation: shutter-out 220ms steps(6) forwards; }
+@keyframes shutter-in  { to { transform: scaleX(1); } }
+@keyframes shutter-out { to { transform: scaleX(0); } }
+
+/* FX-C 对角阶梯擦除:16 条竖列按延迟递增扫过,形成 8-bit 锯齿斜边 */
+.fx-stair { display: grid; grid-template-columns: repeat(16, 1fr); }
+.fx-stair i {
+  background: var(--color-paper);
+  transform: scaleY(0);
+  transform-origin: top;
+  animation: stair-in 150ms steps(4) forwards;
+}
+.fx-stair--out i {
+  transform: scaleY(1);
+  transform-origin: bottom;
+  animation: stair-out 190ms steps(4) forwards;
+}
+@keyframes stair-in  { to { transform: scaleY(1); } }
+@keyframes stair-out { to { transform: scaleY(0); } }
+
+/* FX-B 地名牌:黑场 + 居中磷绿地名 + 闪烁光标 */
+.fx-sign {
+  background: var(--color-paper);
+  display: grid;
+  place-items: center;
+}
+.fx-sign span {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  letter-spacing: 0.12em;
+  color: var(--color-accent);
+  border: 2px solid var(--color-accent);
+  padding: var(--space-sm) var(--space-lg);
+}
+.fx-sign span::after {
+  content: "_";
+  animation: sign-caret 300ms steps(1) infinite;
+}
+@keyframes sign-caret { 50% { opacity: 0; } }
+
+/* fx 预设切换器(仅 ?fx=lab 注入) */
+.fx-lab {
+  position: fixed;
+  left: var(--space-sm);
+  bottom: var(--space-sm);
+  z-index: 1000;
+  display: flex;
+  gap: var(--space-3xs);
+  padding: var(--space-3xs);
+  background: var(--color-paper);
+  border: var(--rule-px);
+  font-family: var(--font-mono);
+}
+.fx-lab button {
+  font: inherit;
+  font-size: var(--text-xs);
+  padding: 4px 8px;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  border: 1px solid var(--color-neutral);
+  cursor: pointer;
+}
+.fx-lab button:hover { background: var(--color-ink); color: var(--color-paper); }
+.fx-lab button[aria-pressed="true"] { background: var(--color-accent); color: var(--color-paper); border-color: var(--color-accent); }
+
 /* ---------- mockup 面板(内容层,浮层内各公司风格)---------- */
 .mock-fig { margin: var(--space-sm) 0 0; }
 .mock-fig figcaption {

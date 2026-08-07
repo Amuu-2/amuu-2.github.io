@@ -427,8 +427,12 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
 (function () {
   const snapMode = matchMedia("(min-width: 64rem) and (min-height: 44rem)");
   const names = ["char", "world", "continue"];
+  const SIGNS = ["◆ CHARACTER · 角色面板", "◆ WORLD MAP · 经历地图", "◆ CONTINUE · 联系我"];
   let lock = false;
-  function animateScroll(to, dur) {
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // steps 量化:把连续进度切成 n 档,产生逐格推进的像素步进感
+  function animateScroll(to, dur, steps) {
     const from = scrollY, delta = to - from, t0 = performance.now();
     const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2); // ease-in-out cubic
     const root = document.documentElement;
@@ -436,11 +440,87 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
     return new Promise((res) => {
       (function step(now) {
         const t = Math.min(1, (now - t0) / dur);
-        scrollTo({ top: from + delta * ease(t), behavior: "instant" }); // 逐帧必须 instant
+        let p = ease(t);
+        if (steps) p = Math.round(p * steps) / steps; // FX-D:量化成离散档位
+        scrollTo({ top: from + delta * p, behavior: "instant" }); // 逐帧必须 instant
         if (t < 1) requestAnimationFrame(step);
         else { root.style.scrollSnapType = ""; res(); }
       })(t0);
     });
+  }
+
+  // 遮罩层:建 n 个格子的全屏 fixed 层,用后自删(同 pixelDissolve 的模式)
+  function makeVeil(kind, n) {
+    const ov = document.createElement("div");
+    ov.className = "fx fx-" + kind;
+    for (let i = 0; i < n; i++) ov.appendChild(document.createElement("i"));
+    document.body.appendChild(ov);
+    return ov;
+  }
+  function stagger(ov, per) { // 逐格递增动画延迟,形成扫过感
+    [...ov.children].forEach((c, i) => { c.style.animationDelay = i * per + "ms"; });
+  }
+
+  // 地名牌:黑场上闪出目的地名称
+  async function placeSign(idx, hold) {
+    const ov = document.createElement("div");
+    ov.className = "fx fx-sign";
+    const s = document.createElement("span");
+    s.textContent = SIGNS[idx];
+    ov.appendChild(s);
+    document.body.appendChild(ov);
+    await wait(hold);
+    ov.remove();
+  }
+
+  // 转场统一形状:遮罩进场 → jump() 瞬移 →(可选地名牌)→ 遮罩退场
+  async function runTransition(fx, nextIdx, target) {
+    const jump = () => scrollTo({ top: target, behavior: "instant" });
+    const sign = fx.includes("b");
+    const wipe = fx.includes("a") ? "shutter" : fx.includes("c") ? "stair" : null;
+
+    if (fx.includes("d")) { await animateScroll(target, 700, 12); return; }   // 步进推屏:无遮罩
+    if (!wipe && !sign) { await animateScroll(target, 700); return; }         // 兜底:原平滑翻页
+
+    let inMs = 0, outMs = 0, veilN = 0, per = 0;
+    if (wipe === "shutter") { inMs = 180; outMs = 220; veilN = 6; per = 0; }
+    else if (wipe === "stair") { inMs = 150; outMs = 190; veilN = 16; per = 18; }
+
+    if (wipe) {
+      const ov = makeVeil(wipe, veilN);
+      if (per) stagger(ov, per);
+      await wait(inMs + per * veilN);
+      jump();
+      if (sign) await placeSign(nextIdx, 260); else await wait(60);
+      ov.classList.add("fx-" + wipe + "--out");
+      if (per) stagger(ov, per);
+      await wait(outMs + per * veilN);
+      ov.remove();
+    } else {                       // 纯地名牌:硬切黑场
+      jump();
+      await placeSign(nextIdx, 260);
+    }
+  }
+
+  // 预设切换器:仅 ?fx=lab 时注入,ASCII 标签(不引入新字符,避免字体子集缺字)
+  let FX = "";
+  if (location.search.includes("fx")) {
+    FX = localStorage.getItem("fx-preset") || "a";
+    const bar = document.createElement("div");
+    bar.className = "fx-lab";
+    [["a", "FX-A"], ["b", "FX-B"], ["c", "FX-C"], ["d", "FX-D"], ["ab", "A+B"], ["cb", "C+B"], ["", "NONE"]]
+      .forEach(([val, label]) => {
+        const b = document.createElement("button");
+        b.textContent = label;
+        b.setAttribute("aria-pressed", String(val === FX));
+        b.addEventListener("click", () => {
+          FX = val;
+          localStorage.setItem("fx-preset", val);
+          [...bar.children].forEach((x, i) => x.setAttribute("aria-pressed", String(i === [...bar.children].indexOf(b))));
+        });
+        bar.appendChild(b);
+      });
+    document.body.appendChild(bar);
   }
   addEventListener("wheel", async (e) => {
     if (!snapMode.matches) return;
@@ -462,7 +542,7 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
     if (next === cur) return;
     lock = true;
     if (REDUCED_MOTION) scrollTo({ top: tops[next], behavior: "instant" });
-    else await animateScroll(tops[next], 700);
+    else await runTransition(FX, next, tops[next]);
     setTimeout(() => { lock = false; }, 300); // 缓冲:吃掉触控板惯性余量,防连翻
   }, { passive: false });
 })();
