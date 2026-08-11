@@ -109,6 +109,35 @@ window.__introActive = true;
 document.documentElement.classList.add('intro-lock');
 document.querySelectorAll('header.hud, main').forEach(el => { el.inert = true; });
 
+/* ---------- 竖屏自适应 ----------
+   视频是 16:9 横构图。手机竖屏直接按 16:9 摆,整个房间会缩成中间一条
+   只占视口 26% 高的窄带,开机文字掉到 4px 不可读。所以竖屏时把舞台做得
+   更方,画面居中横向裁切(只裁两侧,纵向永远完整)。
+   ⚠ 裁切必须做在着色器的采样坐标上 —— 画面是 WebGL 画的,CSS 的
+   object-fit 管不到它,直接改 CSS 只会把画面拉扁。
+   裁到 MIN_STAGE_ASPECT 时仍能完整看到显示器(x 39.6~50.2%)和
+   百叶窗(x 41~71%),再方就要把窗户切掉了。 */
+const VIDEO_ASPECT = 16/9;
+const MIN_STAGE_ASPECT = 0.9;
+function stageAspect(){
+  return Math.min(VIDEO_ASPECT, Math.max(MIN_STAGE_ASPECT, innerWidth/innerHeight));
+}
+function cropFrac(){                 // 舞台里能看到原画面宽度的比例
+  return Math.min(1, stageAspect()/VIDEO_ASPECT);
+}
+/* 原画面百分比 → 裁切后的舞台百分比。纵向不裁,所以 y/h 原样透传 */
+function mapRect(r){
+  const f = cropFrac();
+  if(f >= 0.9999) return r;
+  const left = (1 - f)/2;            // 居中裁切
+  return { x:(r.x/100 - left)/f*100, y:r.y, w:r.w/f, h:r.h };
+}
+function applyStageAspect(){
+  const a = stageAspect();
+  stage.style.setProperty('--stage-aspect', a);
+  stage.style.setProperty('--stage-aspect-num', a);
+}
+
 const clamp01 = x => Math.min(1, Math.max(0, x));
 const easeInOut = x => x<0.5 ? 2*x*x : 1-Math.pow(-2*x+2,2)/2;
 const lerp = (a,b,t) => a+(b-a)*t;
@@ -122,12 +151,13 @@ function currentScreenRect(){
   return lerpRect(CONFIG.screenRect, CONFIG.screenRectEnd, clamp01(progress));
 }
 function layout(){
-  const r = currentScreenRect();
+  const r = mapRect(currentScreenRect());
   place(screenEl, r);
-  place(hotspot, CONFIG.hotspotRect);
+  place(hotspot, mapRect(CONFIG.hotspotRect));
   screenEl.style.fontSize = Math.max(4, stage.clientHeight*r.h/100/13) + 'px';
   layoutPreview();
-  if(calibOn){ place(gA,CONFIG.screenRect); place(gB,CONFIG.screenRectEnd); place(gC,CONFIG.hotspotRect); }
+  if(calibOn){ place(gA,mapRect(CONFIG.screenRect)); place(gB,mapRect(CONFIG.screenRectEnd));
+               place(gC,mapRect(CONFIG.hotspotRect)); }
 }
 
 /* ---- 屏幕内的网站预览(真 iframe,同源缩影,不是截图) ----
@@ -204,16 +234,16 @@ function buildPreview(){
 
 function layoutPreview(){
   if(!previewEl) return;
-  const R = CONFIG.screenRectEnd;
+  const R = mapRect(CONFIG.screenRectEnd);
   place(previewEl, R);
-  if(!previewFrame) return;                             // b 模式只有画布,没有 iframe
+  if(!previewFrame) return;
   const rw = stage.clientWidth*R.w/100, rh = stage.clientHeight*R.h/100;
   const k0 = Math.min(rw/innerWidth, rh/innerHeight);   // contain:空边像 CRT 过扫描区
   previewFrame.style.width  = innerWidth+'px';
   previewFrame.style.height = innerHeight+'px';
   previewFrame.style.transform = `translate(-50%,-50%) scale(${k0.toFixed(5)})`;
 }
-addEventListener('resize', () => { layout(); resizeCanvas(); });
+addEventListener('resize', () => { applyStageAspect(); layout(); resizeCanvas(); });
 
 /* ---------- ③ 抖动后处理(WebGL Bayer,退化到 2D 直绘) ---------- */
 const BAYER = [
@@ -228,10 +258,12 @@ varying vec2 uv;
 uniform sampler2D tex, bayer;
 uniform vec2 res; uniform float pixel, levels, mono, exposure, gamma;
 uniform vec3 tint;
+uniform vec2 uvScale, uvOffset;
 void main(){
   vec2 grid = max(res/pixel, vec2(1.0));
   vec2 cell = floor(uv*grid);
-  vec3 c = texture2D(tex, (cell+0.5)/grid).rgb;
+  // 抖动格子留在屏幕空间(像素块在屏上才是均匀的),只把采样点映射进裁切区
+  vec3 c = texture2D(tex, ((cell+0.5)/grid)*uvScale + uvOffset).rgb;
   c = pow(clamp(c*exposure,0.0,1.0), vec3(1.0/max(gamma,0.01)));
   float th = texture2D(bayer, cell/8.0).r;
   float L = max(levels-1.0,1.0);
@@ -256,7 +288,8 @@ function initGL(){
     gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
     const loc=gl.getAttribLocation(prog,'p');
     gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc,2,gl.FLOAT,false,0,0);
-    for(const n of ['res','pixel','levels','mono','exposure','gamma','tint','tex','bayer'])
+    for(const n of ['res','pixel','levels','mono','exposure','gamma','tint','tex','bayer',
+                    'uvScale','uvOffset'])
       uni[n]=gl.getUniformLocation(prog,n);
     texSrc=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,texSrc);
     for(const [a,b] of [[gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE],[gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE],
@@ -291,6 +324,9 @@ function present(source){
     gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D,texSrc);
     try{ gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,source); }catch(e){ return; }
     const dpr=Math.min(devicePixelRatio||1,2);
+    const f=cropFrac();
+    gl.uniform2f(uni.uvScale, f, 1);              // 竖屏横向裁切,纵向永远完整
+    gl.uniform2f(uni.uvOffset, (1-f)/2, 0);
     gl.uniform2f(uni.res,fx.width,fx.height);
     gl.uniform1f(uni.pixel,    off?1  :Math.max(1,D.pixel*dpr));
     gl.uniform1f(uni.levels,   off?256:D.levels);
@@ -303,8 +339,11 @@ function present(source){
     c.imageSmoothingEnabled=false; c.fillStyle='#000'; c.fillRect(0,0,fx.width,fx.height);
     const sw=source.videoWidth||source.width, sh=source.videoHeight||source.height;
     if(!sw||!sh) return;
-    const k=Math.min(fx.width/sw,fx.height/sh);
-    c.drawImage(source,(fx.width-sw*k)/2,(fx.height-sh*k)/2,sw*k,sh*k);
+    const f=cropFrac();                            // 同样的裁切,保持与 WebGL 路径一致
+    const cw=sw*f, cx=(sw-cw)/2;
+    const k=Math.min(fx.width/cw,fx.height/sh);
+    c.drawImage(source, cx,0,cw,sh,
+                (fx.width-cw*k)/2,(fx.height-sh*k)/2,cw*k,sh*k);
   }
 }
 
@@ -437,7 +476,7 @@ function typeLines(lines,done){
 function toEnter(){
   if(state==='done') return;
   state='enter';
-  const R=CONFIG.screenRectEnd;                 // 从推近后的屏幕位置继续飞进去
+  const R=mapRect(CONFIG.screenRectEnd);        // 从推近后的屏幕位置继续飞进去
   const sw=stage.clientWidth, sh=stage.clientHeight;
   const rect=stage.getBoundingClientRect();
   const scale=Math.max(innerWidth/(sw*R.w/100), innerHeight/(sh*R.h/100));
@@ -563,7 +602,7 @@ if(DEBUG){
 
 /* ---------- ⑦ 启动 ---------- */
 (async function start(){
-  layout(); resizeCanvas(); initGL();
+  applyStageAspect(); layout(); resizeCanvas(); initGL();
   const [okIdle,okPush]=await Promise.all([
     probe(vIdle,CONFIG.idleVideo), probe(vPush,CONFIG.pushVideo) ]);
   if(!(okIdle&&okPush)){

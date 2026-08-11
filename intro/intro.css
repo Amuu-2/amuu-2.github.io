@@ -18,11 +18,16 @@
 }
 html.intro-lock{ overflow:hidden; }          /* 播放期间锁页面滚动 */
 
-/* 舞台锁 16:9 居中,保证屏幕矩形百分比在任何设备上一致 */
-#intro .stage{ position:relative; aspect-ratio:16/9;
-  width:min(100vw, 177.77vh); max-height:100vh; overflow:hidden; }
+/* 舞台比例由 intro.js 按视口算(桌面 16:9,手机竖屏收窄到 0.9 并横向裁切),
+   居中显示。dvh 让手机地址栏伸缩时高度不跳。
+   注意:画面实际是 #intro-fx 画的,video 元素只是纹理源,平时看不见 */
+#intro .stage{ position:relative;
+  aspect-ratio:var(--stage-aspect, 16/9);
+  width:min(100vw, calc(100vh * var(--stage-aspect-num, 1.7778)));
+  width:min(100vw, calc(100dvh * var(--stage-aspect-num, 1.7778)));
+  max-height:100vh; max-height:100dvh; overflow:hidden; }
 #intro .stage video{ position:absolute; inset:0; width:100%; height:100%;
-  object-fit:contain; background:#000; }
+  object-fit:cover; background:#000; }
 #intro-fx{ position:absolute; inset:0; width:100%; height:100%; display:block;
   image-rendering:pixelated; }
 

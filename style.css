@@ -1,5 +1,5 @@
 /* Hallmark · theme: studied-DNA (source: https://careers.kimi.com/zh-cn) · art direction: 像素 RPG 存档界面(场景化,非文档) */
-@import url("tokens.css?v=9"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
+@import url("tokens.css?v=10"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -67,7 +67,7 @@ body { padding-top: var(--hud-h); }
   border: var(--rule-px);
   padding: var(--space-2xs) var(--space-md);
   text-decoration: none;
-  min-height: 40px;
+  min-height: 44px;          /* 触控最小尺寸;这是求职站最重要的 CTA,别调小 */
   display: inline-flex;
   align-items: center;
   color: var(--color-ink);
@@ -332,6 +332,9 @@ body { padding-top: var(--hud-h); }
   padding: var(--space-2xs) var(--space-sm);
   cursor: pointer;
   white-space: nowrap;
+  min-height: 44px;          /* 触控最小尺寸:手机上这是关闭浮层的主要控件 */
+  display: inline-flex;
+  align-items: center;
   transition: background-color var(--dur-micro) var(--ease-out), color var(--dur-micro) var(--ease-out);
 }
 .case__close:hover { background: var(--color-ink); color: var(--color-paper); }
