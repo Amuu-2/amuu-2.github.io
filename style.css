@@ -1,5 +1,5 @@
 /* Hallmark · theme: studied-DNA (source: https://careers.kimi.com/zh-cn) · art direction: 像素 RPG 存档界面(场景化,非文档) */
-@import url("tokens.css?v=10"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
+@import url("tokens.css?v=14"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -600,22 +600,87 @@ body { padding-top: var(--hud-h); }
   .char { grid-template-columns: minmax(0, 1fr); gap: var(--space-xl); }
   .char__pic { width: min(58%, 250px); }
 }
+/* ==========================================================================
+   手机竖屏(≤48rem)· 场景化重构
+   桌面靠 scroll-snap 建立"一屏 = 一个场景"的 RPG 存档感;手机上翻页降级成
+   自然滚动后,板块高度变成内容驱动的随机值(实测 0.94/1.25/0.61 屏),场景感
+   消失、成了普通长网页。这里不把 snap 加回来(会和手机原生滚动打架,且移动端
+   内容完整性优先),改用:每个板块 min-height 撑满一屏 + 内容垂直居中 ——
+   照常自然滚动,但每一屏都落成一个完整场景。
+   ========================================================================== */
 @media (max-width: 48rem) {
   .hud .hud--wide { display: none; }
   .hud .sep { display: none; }
-  /* 纵向场景 */
-  .world__canvas { height: 960px; }
+
+  /* 三个场景各占满一屏。用 min-height 不用 height:小屏(320×568)内容超出时
+     仍能撑开,不会裁掉内容 */
+  .char, .world, .continue { min-height: calc(100dvh - var(--hud-h)); }
+
+  /* ---- 场景一 · 角色卡(竖版重构)----
+     桌面是"立绘左 + 信息右"两栏。手机上塌成一栏后立绘仍保持 58% 宽左对齐,
+     右侧 43% 是死空白。改成居中角色卡 —— RPG 角色面板本来就是竖构图,
+     手机比桌面更适合它 */
+  .char {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: var(--space-lg);
+    padding: var(--space-xl) var(--space-lg);
+  }
+  .char__pic { width: min(54%, 200px); }
+  .char > div { width: 100%; }
+  .char h1 { font-size: var(--text-xl); }
+  .char h1 .cls { display: block; font-size: var(--text-base); margin-top: var(--space-2xs); }
+  .char__origin { margin-top: var(--space-sm); }
+  .inv { margin-top: var(--space-lg); }
+  .inv__lab { display: block; text-align: center; }
+  /* 装备栏铺满宽度:flex-wrap 会在末行留下不齐的缺口,grid 三列永远对齐 */
+  .inv__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-xs); }
+  .inv__cell { width: auto; }
+  .inv__tip { display: none; }         /* 触屏没有 hover,提示永远不会出现,不占位 */
+
+  /* ---- 场景二 · 世界地图(视口驱动)----
+     原来画布写死 960px,与视口无关 → 1.25 屏的尴尬高度,永远看不全。
+     改成一屏高,关卡用百分比定位,旗杆与路牌按手机缩小以免挤在一起 */
+  /* ⚠ 不要给 .world 加 display:flex —— .world__canvas 带 margin-inline:auto,
+     在 column flex 容器里交叉轴两侧 auto 边距会取消 stretch,画布会塌成 0 宽,
+     五个关卡全挤到正中、路牌被压成竖条。直接给画布设高即可 */
+  .world__canvas {
+    height: auto;
+    /* 一屏高,但给个下限:320×568 这类矮屏上一屏放不下五个关卡,
+       宁可让地图略超一屏也不能让关卡被 overflow:hidden 裁掉 */
+    min-height: max(calc(100dvh - var(--hud-h) - var(--exp-h)), 34rem);
+  }
   .path--d { display: none; }
   .path--m { display: block; }
-  .mt--1 { left: -50px; }
-  .mt--2 { right: -100px; }
-  .stage--1 { left: 7%;  top: 56px;  bottom: auto; }
-  .stage--2 { left: 42%; top: 240px; }
-  .stage--3 { left: 7%;  top: 430px; bottom: auto; }
-  .stage--4 { left: 42%; top: 620px; }
-  .stage--5 { left: 10%; top: 815px; bottom: auto; }
-  .stage__sign { max-width: 200px; }
-  .inv__cell { width: 62px; }
+  /* 山体原本是 240/320px 定宽(为 1200px 画布配的),在 375px 画布上会溢出。
+     改成百分比,跟着画布缩放 */
+  .mt--1 { left: -4%;  width: 46%; height: 88px; }
+  .mt--2 { right: -6%; width: 58%; height: 112px; }
+  .stage__flag { align-items: flex-end; }
+  .stage__pole { height: 34px; }
+  .stage__cloth { width: 30px; height: 20px; }
+  /* 路牌宽度必须跟着视口收 —— 固定 150px 在 320 宽的屏上会让左右两列水平相撞 */
+  .stage__sign { max-width: min(150px, 40vw); padding: var(--space-2xs) var(--space-xs); line-height: 1.5; }
+  /* 左右两列错开走位。路牌 max-width 150px ≈ 375 宽屏的 40%,所以左列起点 4%、
+     右列起点 46%,两列水平不交叠;纵向间隔 ~19% 也大于单个关卡的高度 */
+  .stage--1 { left: 4%;  top: 6%;  bottom: auto; }
+  .stage--2 { left: 46%; top: 25%; bottom: auto; }
+  .stage--3 { left: 4%;  top: 45%; bottom: auto; }
+  .stage--4 { left: 46%; top: 64%; bottom: auto; }
+  .stage--5 { left: 4%;  top: 76%; bottom: auto; }
+
+  /* ---- 场景三 · 收尾 ---- */
+  .continue {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  /* ---- 案例浮层 ---- */
   .case { width: calc(100% - 1rem); max-height: calc(100dvh - 1rem); }
   .case__body { padding: var(--space-md) var(--space-md) var(--space-xl); max-height: calc(100dvh - 1rem - 3.4rem); }
   .cmp { grid-template-columns: minmax(0, 1fr); }
