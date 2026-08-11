@@ -55,8 +55,6 @@ html.intro-lock{ overflow:hidden; }          /* 播放期间锁页面滚动 */
 #intro-preview.live{ opacity:1; }
 #intro-preview iframe{ position:absolute; left:50%; top:50%; border:0;
   pointer-events:none; background:#000; }
-#intro-preview canvas{ position:absolute; inset:0; width:100%; height:100%;
-  image-rendering:pixelated; }
 
 #intro-skip{ position:fixed; z-index:910;
   right:max(16px,env(safe-area-inset-right));
