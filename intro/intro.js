@@ -67,6 +67,9 @@ const stage=$('.stage'), fx=document.getElementById('intro-fx'),
 
 const params = new URLSearchParams(location.search);
 const DEBUG  = params.get('intro') === 'debug';
+/* 预览像素化方案(对比试装用):a=SVG马赛克逐档 b=WebGL抖动(开场同款着色器,
+   实时DOM截取) c=混合(抖动开场+实时iframe落地)。选定后收敛成一种 */
+const PXMODE = (params.get('px') || 'a').toLowerCase();
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /* ---------- 播不播?同步决定,站点脚本在本文件之后执行 ---------- */
@@ -109,7 +112,8 @@ function layout(){
    缩放对齐的关键:iframe 尺寸 = 视口,按 contain 缩进 screenRectEnd;
    toEnter 的整体放大系数恰好是它的倒数 → 飞入结束时 iframe 和真实
    视口 1:1 像素对齐,揭开 overlay 的瞬间无缝 */
-let previewEl=null, previewFrame=null, pxFlood=null, pxComp=null, pxMorph=null;
+let previewEl=null, previewFrame=null, pxFlood=null, pxComp=null, pxMorph=null, pxFuncs=[];
+let previewCanvas=null, previewGL=null, captureImg=null, enterStart=0;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /* SVG 马赛克滤镜:feFlood 在每个 B×B 格子里点一个小点 → feTile 铺满 →
@@ -134,11 +138,12 @@ function buildPxFilter(){
   pxMorph = document.createElementNS(SVG_NS,'feMorphology');
   pxMorph.setAttribute('operator','dilate');
   const post = document.createElementNS(SVG_NS,'feComponentTransfer');
+  pxFuncs = [];
   for(const ch of ['R','G','B']){
     const fn = document.createElementNS(SVG_NS,'feFunc'+ch);
     fn.setAttribute('type','discrete');
     fn.setAttribute('tableValues','0 0.2 0.4 0.6 0.8 1');
-    post.appendChild(fn);
+    post.appendChild(fn); pxFuncs.push(fn);
   }
   for(const n of [pxFlood,pxComp,tile,mask,pxMorph,post]) filter.appendChild(n);
   svg.appendChild(filter);
@@ -151,30 +156,162 @@ function setPx(B){                  // B = 马赛克块边长(px);0 = 摘掉滤�
   pxFlood.setAttribute('x', half-1); pxFlood.setAttribute('y', half-1);
   pxComp.setAttribute('width', B);  pxComp.setAttribute('height', B);
   pxMorph.setAttribute('radius', half);
-  // 块越小画面越亮:B=12 → 71% 亮度,逐档通电到 100%
+  // 色阶量化只在粗块阶段用;细块阶段继续量化会像脏色带
+  for(const fn of pxFuncs) fn.setAttribute('type', B>3 ? 'discrete' : 'identity');
+  // 块越小画面越亮:逐档通电到 100%
   previewEl.style.filter =
-    `url(#intro-px) brightness(${(1-B*0.024).toFixed(2)}) saturate(${(1-B*0.0125).toFixed(2)})`;
+    `url(#intro-px) brightness(${(1-B*0.035).toFixed(2)}) saturate(${(1-B*0.02).toFixed(2)})`;
 }
 
-function buildPreview(){
-  if(previewEl) return;
-  previewEl = document.createElement('div');
-  previewEl.id = 'intro-preview';
+function buildIframe(){
+  if(previewFrame) return;
   previewFrame = document.createElement('iframe');
   previewFrame.src = location.pathname + '?intro=skip';
   previewFrame.setAttribute('aria-hidden','true');
   previewFrame.setAttribute('tabindex','-1');
   previewFrame.setAttribute('title','');
-  previewEl.appendChild(previewFrame);
-  stage.appendChild(previewEl);
-  buildPxFilter();
-  setPx(12);                        // 亮起时:12px 大块马赛克 + 6 档色阶
+  previewEl.insertBefore(previewFrame, previewEl.firstChild);
   layoutPreview();
+}
+function buildPreview(){
+  if(previewEl) return;
+  previewEl = document.createElement('div');
+  previewEl.id = 'intro-preview';
+  stage.appendChild(previewEl);
+  if(PXMODE !== 'b') buildIframe();           // a/c 需要实时 iframe
+  if(PXMODE === 'a'){
+    buildPxFilter();
+    setPx(6);                                 // 亮起时:6px 马赛克(12px 被否,太糊)
+  }else{
+    // b/c:开场同款 WebGL 抖动,画在预览画布上;素材是实时截取的首屏 DOM
+    previewCanvas = document.createElement('canvas');
+    previewEl.appendChild(previewCanvas);
+    previewGL = initGL2(previewCanvas);
+    captureSite().then(img => {
+      captureImg = img;
+      if(!img){                               // 截取失败 → 整体回退方案 a
+        console.warn('[intro] 首屏截取失败,预览回退马赛克方案');
+        if(previewCanvas){ previewCanvas.remove(); previewCanvas=null; previewGL=null; }
+        buildIframe(); buildPxFilter(); setPx(6);
+      }
+    });
+  }
+  layoutPreview();
+}
+
+/* ---- 实时截取首屏:克隆 DOM → 内联字体/图片/样式 → SVG foreignObject
+   → <img>。全程同源自包含,canvas 不会被污染;浏览器自己排版,
+   还原度远高于手写重绘,而且永远是当前版本的网站 ---- */
+async function captureSite(){
+  try{
+    const vw = innerWidth, vh = innerHeight;
+    const cssHref = document.querySelector('link[href^="style.css"]').getAttribute('href');
+    let css = await (await fetch(cssHref)).text();
+    const imp = css.match(/@import\s+url\("([^"]+)"\);?/);
+    if(imp) css = css.replace(imp[0], await (await fetch(imp[1])).text());
+    const fUrl = css.match(/url\("(fonts\/[^"]+)"\)/);
+    if(fUrl){
+      const buf = new Uint8Array(await (await fetch(fUrl[1])).arrayBuffer());
+      let bin=''; for(let i=0;i<buf.length;i+=8192)
+        bin += String.fromCharCode.apply(null, buf.subarray(i,i+8192));
+      css = css.replace(fUrl[0], `url("data:font/woff2;base64,${btoa(bin)}")`);
+    }
+    // body/html 选择器在 foreignObject 里没有宿主,改挂到包装 div 上
+    css = css.replace(/(^|[}\s,])body(?=[\s,{:])/g, '$1.x-body')
+             .replace(/(^|[}\s,])html(?=[\s,{:])/g, '$1.x-body');
+    const wrap = document.createElement('div');
+    for(const sel of ['header.hud','main']){
+      const src = document.querySelector(sel);
+      if(src) wrap.appendChild(src.cloneNode(true));
+    }
+    for(const im of wrap.querySelectorAll('img')){       // 图片转 data URI
+      const blob = await (await fetch(im.getAttribute('src'))).blob();
+      im.setAttribute('src', await new Promise(r => {
+        const f=new FileReader(); f.onload=()=>r(f.result); f.readAsDataURL(blob); }));
+    }
+    const bodyCS = getComputedStyle(document.body);
+    const svg =
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${vw}" height="${vh}">`+
+      `<foreignObject width="100%" height="100%">`+
+      `<div xmlns="http://www.w3.org/1999/xhtml" class="x-body" style="width:${vw}px;`+
+      `height:${vh}px;overflow:hidden;margin:0;background:${bodyCS.backgroundColor};`+
+      `color:${bodyCS.color};font-family:${bodyCS.fontFamily.replace(/"/g,"'")}">`+
+      `<style>${css.replace(/]]>/g,'')}</style>`+
+      new XMLSerializer().serializeToString(wrap).replace(/^<div[^>]*>|<\/div>$/g,'')+
+      `</div></foreignObject></svg>`;
+    const img = new Image();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+    await new Promise((ok,no) => { img.onload=ok; img.onerror=no; setTimeout(no,4000); });
+    // 污染自检:画 1px 读回来,失败说明这张图进不了 WebGL
+    const t = document.createElement('canvas'); t.width=t.height=1;
+    const tc = t.getContext('2d'); tc.drawImage(img,0,0,1,1);
+    tc.getImageData(0,0,1,1);
+    return img;
+  }catch(e){ console.warn('[intro] captureSite:', e.message); return null; }
+}
+
+/* ---- 预览专用的第二套抖动管线(和开场同一份着色器源码) ---- */
+function initGL2(canvas){
+  try{
+    const g = canvas.getContext('webgl',{antialias:false,alpha:false});
+    if(!g) return null;
+    const sh=(ty,src)=>{ const s=g.createShader(ty); g.shaderSource(s,src); g.compileShader(s);
+      if(!g.getShaderParameter(s,g.COMPILE_STATUS)) throw new Error(g.getShaderInfoLog(s)); return s; };
+    const prog=g.createProgram();
+    g.attachShader(prog,sh(g.VERTEX_SHADER,VS)); g.attachShader(prog,sh(g.FRAGMENT_SHADER,FS));
+    g.linkProgram(prog);
+    if(!g.getProgramParameter(prog,g.LINK_STATUS)) throw new Error(g.getProgramInfoLog(prog));
+    g.useProgram(prog);
+    const buf=g.createBuffer(); g.bindBuffer(g.ARRAY_BUFFER,buf);
+    g.bufferData(g.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),g.STATIC_DRAW);
+    const loc=g.getAttribLocation(prog,'p');
+    g.enableVertexAttribArray(loc); g.vertexAttribPointer(loc,2,g.FLOAT,false,0,0);
+    const u={}; for(const n of ['res','pixel','levels','mono','exposure','gamma','tint','tex','bayer'])
+      u[n]=g.getUniformLocation(prog,n);
+    const tex=g.createTexture(); g.bindTexture(g.TEXTURE_2D,tex);
+    for(const [a,b] of [[g.TEXTURE_WRAP_S,g.CLAMP_TO_EDGE],[g.TEXTURE_WRAP_T,g.CLAMP_TO_EDGE],
+                        [g.TEXTURE_MIN_FILTER,g.LINEAR],[g.TEXTURE_MAG_FILTER,g.LINEAR]])
+      g.texParameteri(g.TEXTURE_2D,a,b);
+    const bt=g.createTexture(); g.activeTexture(g.TEXTURE1); g.bindTexture(g.TEXTURE_2D,bt);
+    const data=new Uint8Array(64*4);
+    for(let i=0;i<64;i++){ const v=Math.round((BAYER[i]+0.5)/64*255);
+      data[i*4]=v; data[i*4+1]=v; data[i*4+2]=v; data[i*4+3]=255; }
+    g.texImage2D(g.TEXTURE_2D,0,g.RGBA,8,8,0,g.RGBA,g.UNSIGNED_BYTE,data);
+    for(const [a,b] of [[g.TEXTURE_WRAP_S,g.REPEAT],[g.TEXTURE_WRAP_T,g.REPEAT],
+                        [g.TEXTURE_MIN_FILTER,g.NEAREST],[g.TEXTURE_MAG_FILTER,g.NEAREST]])
+      g.texParameteri(g.TEXTURE_2D,a,b);
+    g.uniform1i(u.tex,0); g.uniform1i(u.bayer,1);
+    const hex=getComputedStyle(intro).getPropertyValue('--phosphor').trim();
+    const m=/^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex)||[0,'7c','e3','8b'];
+    g.uniform3f(u.tint, parseInt(m[1],16)/255, parseInt(m[2],16)/255, parseInt(m[3],16)/255);
+    const comp = document.createElement('canvas');       // contain 合成用
+    const cc = comp.getContext('2d');
+    return { present(img, o){
+      const dpr=Math.min(devicePixelRatio||1,2);
+      const w=Math.max(1,Math.round(previewEl.clientWidth*dpr)),
+            h=Math.max(1,Math.round(previewEl.clientHeight*dpr));
+      if(canvas.width!==w||canvas.height!==h){ canvas.width=w; canvas.height=h; g.viewport(0,0,w,h); }
+      if(comp.width!==w||comp.height!==h){ comp.width=w; comp.height=h; }
+      cc.fillStyle='#020503'; cc.fillRect(0,0,w,h);
+      const k=Math.min(w/img.naturalWidth, h/img.naturalHeight);   // contain,同 iframe 的 k0
+      cc.drawImage(img,(w-img.naturalWidth*k)/2,(h-img.naturalHeight*k)/2,
+                   img.naturalWidth*k, img.naturalHeight*k);
+      g.activeTexture(g.TEXTURE0); g.bindTexture(g.TEXTURE_2D,tex);
+      try{ g.texImage2D(g.TEXTURE_2D,0,g.RGBA,g.RGBA,g.UNSIGNED_BYTE,comp); }catch(e){ return; }
+      g.uniform2f(u.res,w,h);
+      g.uniform1f(u.pixel,   Math.max(1,o.pixel*dpr));
+      g.uniform1f(u.levels,  o.levels);
+      g.uniform1f(u.mono,    o.mono);
+      g.uniform1f(u.exposure,1); g.uniform1f(u.gamma,1);
+      g.drawArrays(g.TRIANGLE_STRIP,0,4);
+    } };
+  }catch(e){ console.warn('[intro] 预览抖动管线不可用:',e.message); return null; }
 }
 function layoutPreview(){
   if(!previewEl) return;
   const R = CONFIG.screenRectEnd;
   place(previewEl, R);
+  if(!previewFrame) return;                             // b 模式只有画布,没有 iframe
   const rw = stage.clientWidth*R.w/100, rh = stage.clientHeight*R.h/100;
   const k0 = Math.min(rw/innerWidth, rh/innerHeight);   // contain:空边像 CRT 过扫描区
   previewFrame.style.width  = innerWidth+'px';
@@ -336,6 +473,18 @@ function frame(now){
   layout();
   const v=(state==='idle')?vIdle:vPush;
   if(v.readyState>=2) present(v);
+
+  /* b/c:预览抖动逐帧驱动 —— 像素 8→1 连续收细,磷绿混合渐褪,色阶渐开。
+     这是 uniform 动画,GPU 上跑,天生丝滑不跳档 */
+  if(previewGL && captureImg && (state==='reveal'||state==='enter')){
+    const t = state==='enter' ? clamp01((now-enterStart)/CONFIG.enterMs) : 0;
+    const e = easeInOut(t);
+    previewGL.present(captureImg, {
+      pixel : lerp(8, 1, e),
+      levels: t>0.85 ? 256 : lerp(6, 24, e),
+      mono  : lerp(0.35, 0, Math.min(1, e*1.4)),
+    });
+  }
 }
 
 function toIdle(){
@@ -396,16 +545,26 @@ function toEnter(){
   intro.style.transition =
     `transform ${CONFIG.enterMs}ms cubic-bezier(.6,0,.9,.45), ` +
     `opacity ${CONFIG.enterMs*0.55}ms ease ${CONFIG.enterMs*0.45}ms`;
+  enterStart = performance.now();
   requestAnimationFrame(() => {
     intro.style.transform=`scale(${scale.toFixed(3)})`; intro.style.opacity='0';
   });
-  /* 放大的同时逐档升分辨率:12→9→6→4→2→清晰。
-     硬边跳档,不做连续过渡 —— 和站点转场的 steps 是同一种语言 */
-  const LADDER = [9, 6, 4, 2, 0];
-  const per = CONFIG.enterMs / (LADDER.length + 1);
-  LADDER.forEach((B, i) => setTimeout(() => {
-    if(state==='enter') setPx(B);
-  }, per * (i + 1)));
+  if(PXMODE==='a' || !previewCanvas){
+    /* a:硬边跳档升分辨率,1px 粒度肉眼接近连续;在飞入 65% 处就完全清晰,
+       剩下 35% 是"清晰预览 ↔ 真实页面"的交叉淡出 → 落地无缝 */
+    const LADDER = [5, 4, 3, 2, 1, 0];
+    const per = CONFIG.enterMs * 0.65 / LADDER.length;
+    LADDER.forEach((B, i) => setTimeout(() => {
+      if(state==='enter') setPx(B);
+    }, per * (i + 1)));
+  }else if(PXMODE==='c' && previewFrame){
+    /* c:60% 处抖动画布淡出 300ms,把落地交给下面的实时 iframe */
+    setTimeout(() => {
+      if(state!=='enter' || !previewCanvas) return;
+      previewCanvas.style.transition='opacity 300ms ease';
+      previewCanvas.style.opacity='0';
+    }, CONFIG.enterMs*0.6);
+  }
   setTimeout(()=>finish(true), CONFIG.enterMs+120);
 }
 /* 结束:拆掉 overlay,把页面交还给站点脚本。
