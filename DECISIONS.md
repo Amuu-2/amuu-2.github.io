@@ -35,5 +35,6 @@
 - **接入 Blender 预渲染的 CRT 开场**:昏暗房间待机循环 → 点击电脑 → 推镜(1.5s,带运动模糊)→ 打字机开机自检 → 飞进屏幕露出正文。技术路线是"预渲染视频 + DOM 接管",不用 Three.js;源项目(Blender 场景脚本/渲染管线/踩坑记录)在 `Desktop\intor\files`,仓库只放成品(两段 mp4 共 215KB)。
 - **只对新访客播一次**(`localStorage`),回访 HR 直达正文且视频零加载;`?intro=force` 重播 / `?intro=skip` 跳过 / `?intro=debug` 校准调参面板。尊重 `prefers-reduced-motion`。
 - **与站点的耦合刻意压到两点**:`window.__introActive` 旗标(站点滚轮翻页与首屏 dissolve 据此让位)+ 结束时调站点的 `pixelDissolve` 交接。开场层从 DOM 自拆,正文始终是真实 DOM(SEO/读屏不受影响)。
-- **屏幕内联动(2026-08-11 追加)**:打字结束后,CRT 屏幕里亮起网站首屏的模糊缩影(同源 iframe 实时渲染,非截图,永不过时),随飞入同步放大+锐化,结束时与真实视口 1:1 像素对齐(iframe 按 contain 系数 k0 缩进屏幕矩形,飞入放大系数恒等于 1/k0)。自然到达不再放 dissolve(已无缝);跳过/Esc 仍放 dissolve 补进场。
+- **屏幕内联动(2026-08-11 追加)**:打字结束后,CRT 屏幕里亮起网站首屏的缩影(同源 iframe 实时渲染,非截图,永不过时),随飞入同步放大,结束时与真实视口 1:1 像素对齐(iframe 按 contain 系数 k0 缩进屏幕矩形,飞入放大系数恒等于 1/k0)。自然到达不再放 dissolve(已无缝);跳过/Esc 仍放 dissolve 补进场。
+- **清晰化走像素语言,不走高斯模糊**(用户明确否决 blur 滤镜):SVG 马赛克滤镜(feFlood+feTile+feMorphology)+ 6 档色阶量化(呼应抖动 levels:6),飞入时逐档升分辨率 12→9→6→4→2→清晰,亮度同步 71%→100% "逐档通电";硬边跳档,和站点转场的 steps 同一语言。
 - **开机自检文案是虚构机器设定**(LIMU-OS/640K/RPG_SAVE.DAT),不是简历数据,不受诚实红线约束但也不得写成绩效数字;intro 文案(含 JS 里的 bootLines)纳入字体子集扫描源(`fonts/make-subset.py` 的 SOURCES)。

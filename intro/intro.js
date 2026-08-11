@@ -109,7 +109,53 @@ function layout(){
    缩放对齐的关键:iframe 尺寸 = 视口,按 contain 缩进 screenRectEnd;
    toEnter 的整体放大系数恰好是它的倒数 → 飞入结束时 iframe 和真实
    视口 1:1 像素对齐,揭开 overlay 的瞬间无缝 */
-let previewEl=null, previewFrame=null;
+let previewEl=null, previewFrame=null, pxFlood=null, pxComp=null, pxMorph=null;
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/* SVG 马赛克滤镜:feFlood 在每个 B×B 格子里点一个小点 → feTile 铺满 →
+   composite in 把源图像"透过点阵"采样 → dilate 把点撑成整块 = 真像素化。
+   末尾 feComponentTransfer discrete 做 6 档色阶量化,呼应抖动的 levels:6 */
+function buildPxFilter(){
+  const svg = document.createElementNS(SVG_NS,'svg');
+  svg.setAttribute('width','0'); svg.setAttribute('height','0');
+  svg.style.position='absolute';
+  const filter = document.createElementNS(SVG_NS,'filter');
+  filter.setAttribute('id','intro-px');
+  filter.setAttribute('x','0'); filter.setAttribute('y','0');
+  filter.setAttribute('width','100%'); filter.setAttribute('height','100%');
+  pxFlood = document.createElementNS(SVG_NS,'feFlood');
+  pxFlood.setAttribute('width','2'); pxFlood.setAttribute('height','2');
+  pxComp = document.createElementNS(SVG_NS,'feComposite');
+  const tile = document.createElementNS(SVG_NS,'feTile');
+  tile.setAttribute('result','grid');
+  const mask = document.createElementNS(SVG_NS,'feComposite');
+  mask.setAttribute('in','SourceGraphic'); mask.setAttribute('in2','grid');
+  mask.setAttribute('operator','in');
+  pxMorph = document.createElementNS(SVG_NS,'feMorphology');
+  pxMorph.setAttribute('operator','dilate');
+  const post = document.createElementNS(SVG_NS,'feComponentTransfer');
+  for(const ch of ['R','G','B']){
+    const fn = document.createElementNS(SVG_NS,'feFunc'+ch);
+    fn.setAttribute('type','discrete');
+    fn.setAttribute('tableValues','0 0.2 0.4 0.6 0.8 1');
+    post.appendChild(fn);
+  }
+  for(const n of [pxFlood,pxComp,tile,mask,pxMorph,post]) filter.appendChild(n);
+  svg.appendChild(filter);
+  intro.appendChild(svg);           // 随 intro 一起自拆
+}
+function setPx(B){                  // B = 马赛克块边长(px);0 = 摘掉滤镜 = 完全清晰
+  if(!previewEl) return;
+  if(!B){ previewEl.style.filter='none'; return; }
+  const half = Math.max(1, Math.round(B/2));
+  pxFlood.setAttribute('x', half-1); pxFlood.setAttribute('y', half-1);
+  pxComp.setAttribute('width', B);  pxComp.setAttribute('height', B);
+  pxMorph.setAttribute('radius', half);
+  // 块越小画面越亮:B=12 → 71% 亮度,逐档通电到 100%
+  previewEl.style.filter =
+    `url(#intro-px) brightness(${(1-B*0.024).toFixed(2)}) saturate(${(1-B*0.0125).toFixed(2)})`;
+}
+
 function buildPreview(){
   if(previewEl) return;
   previewEl = document.createElement('div');
@@ -121,6 +167,8 @@ function buildPreview(){
   previewFrame.setAttribute('title','');
   previewEl.appendChild(previewFrame);
   stage.appendChild(previewEl);
+  buildPxFilter();
+  setPx(12);                        // 亮起时:12px 大块马赛克 + 6 档色阶
   layoutPreview();
 }
 function layoutPreview(){
@@ -350,11 +398,14 @@ function toEnter(){
     `opacity ${CONFIG.enterMs*0.55}ms ease ${CONFIG.enterMs*0.45}ms`;
   requestAnimationFrame(() => {
     intro.style.transform=`scale(${scale.toFixed(3)})`; intro.style.opacity='0';
-    if(previewEl){                              // 放大的同时变清晰
-      previewEl.style.transition = `filter ${CONFIG.enterMs}ms cubic-bezier(.6,0,.9,.45)`;
-      previewEl.style.filter = 'blur(0px) brightness(1) saturate(1)';
-    }
   });
+  /* 放大的同时逐档升分辨率:12→9→6→4→2→清晰。
+     硬边跳档,不做连续过渡 —— 和站点转场的 steps 是同一种语言 */
+  const LADDER = [9, 6, 4, 2, 0];
+  const per = CONFIG.enterMs / (LADDER.length + 1);
+  LADDER.forEach((B, i) => setTimeout(() => {
+    if(state==='enter') setPx(B);
+  }, per * (i + 1)));
   setTimeout(()=>finish(true), CONFIG.enterMs+120);
 }
 /* 结束:拆掉 overlay,把页面交还给站点脚本。

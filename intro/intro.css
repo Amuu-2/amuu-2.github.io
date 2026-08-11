@@ -46,11 +46,11 @@ html.intro-lock{ overflow:hidden; }          /* 播放期间锁页面滚动 */
 #intro-screen.live{ opacity:1; }
 #intro-screen .caret{ background:var(--phosphor); color:#000; }
 
-/* 屏幕内的网站预览:打字结束后在 CRT 玻璃上亮起(模糊),随飞入一起放大变清晰。
-   锐化动画由 intro.js 内联驱动(时长要和 enterMs 同步) */
+/* 屏幕内的网站预览:打字结束后在 CRT 玻璃上亮起,随飞入逐档升分辨率变清晰。
+   像素化不是 CSS blur,是 SVG 马赛克滤镜(intro.js 里生成并逐档驱动),
+   外加 6 档色阶量化 —— 和开场抖动(pixel:4/levels:6)同一套视觉语言 */
 #intro-preview{ position:absolute; z-index:4; overflow:hidden; opacity:0;
   background:#020503;
-  filter:blur(8px) brightness(.55) saturate(.8);
   transition:opacity .45s ease; }
 #intro-preview.live{ opacity:1; }
 #intro-preview iframe{ position:absolute; left:50%; top:50%; border:0;
