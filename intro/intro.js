@@ -31,25 +31,21 @@ const CONFIG = {
   hotspotRect   : { x:34.5, y:36.5, w:19.0, h:28.0 },
 
   pushMs     : 1500,          // 与 build_room.py 的 PUSH_FRAMES=36 对齐
-  bootHoldMs : 700,
+  bootHoldMs : 500,
   enterMs    : 1300,
 
   dither: { on:true, pixel:4, levels:6, mono:0.15, exposure:1.10, gamma:1.12 },
   sound : { on:true, volume:0.35 },
 
   /* 机器型号/容量是复古机器的虚构设定,不是简历数据(硬约束 2 不适用);
-     文案随时可改,改完重跑字体子集 */
+     文案随时可改,改完重跑字体子集。全程控制在 ~4 秒:HR 的耐心是预算 */
   bootLines: [
-    ['LIMU-OS BIOS  v2.7', 260],
-    ['(C) 2026  ZHANGLIMU SYSTEMS', 380],
-    ['', 120],
-    ['Memory test .......... 640K OK', 280],
-    ['Detecting saves ...', 240],
-    ['  A:  RPG_SAVE.DAT   FOUND', 200],
-    ['', 140],
-    ['Loading WORLDMAP.SYS', 550],
-    ['READY.', 350],
-    ['> RUN ZHANGLIMU.EXE', 450],
+    ['LIMU-OS BIOS  v2.7', 180],
+    ['Memory test ...... 640K OK', 160],
+    ['A: RPG_SAVE.DAT  FOUND', 140],
+    ['', 90],
+    ['READY.', 220],
+    ['> RUN ZHANGLIMU.EXE', 320],
   ],
 
   onlyFirstVisit: true,       // 上线值:回访 HR 不用再看一遍;调试用 ?intro=force
@@ -291,7 +287,7 @@ function typeLines(lines,done){
     if(ci<text.length){
       out+=text[ci++]; if(ci%2===0) keySound();
       screenEl.innerHTML=esc(out)+'<span class="caret">_</span>';
-      setTimeout(step, 26+Math.random()*34);
+      setTimeout(step, 16+Math.random()*22);
     }else{
       out+='\n'; li++; ci=0;
       screenEl.innerHTML=esc(out)+'<span class="caret">_</span>';
