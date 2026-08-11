@@ -1,5 +1,5 @@
 /* Hallmark · theme: studied-DNA (source: https://careers.kimi.com/zh-cn) · art direction: 像素 RPG 存档界面(场景化,非文档) */
-@import url("tokens.css?v=14"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
+@import url("tokens.css?v=15"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }
@@ -288,12 +288,19 @@ body { padding-top: var(--hud-h); }
 
 /* ---------- case file viewer · RPG 对话框 ---------- */
 .case {
-  position: relative;
+  /* 必须 fixed —— 浏览器给 dialog 的默认 absolute 是相对「整个文档」定位的,
+     浮层会被钉在文档顶部;用户滚到第二屏点关卡时,浮层其实在屏幕上方之外,
+     只露出最下面一条(手机上尤其明显,桌面靠浏览器自动滚动掩盖了)。
+     fixed + inset:0 + margin:auto = 相对视口居中,滚到哪都完整可见 */
+  position: fixed;
+  inset: 0;
+  margin: auto;
   border: var(--rule-px);
   background: var(--color-paper);
   color: var(--color-ink-2);
   padding: 0;
   width: min(920px, 92vw);
+  height: fit-content;
   max-height: calc(100dvh - 3rem);
   overflow: hidden;
 }
