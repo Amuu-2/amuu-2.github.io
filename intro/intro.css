@@ -1,0 +1,88 @@
+/* ============================================================
+   CRT 开场动画 · 样式层
+   源项目(Blender 场景/渲染管线)在 C:\Users\张理牧\Desktop\intor\files
+   颜色:--phosphor 必须保持 hex 格式 —— intro.js 会解析它喂给 WebGL 着色器
+   字体:走站点 tokens 的像素字体;改这里的任何文案要重跑 fonts/make-subset.py
+   ============================================================ */
+#intro{
+  --phosphor:     #7ce38b;
+  --phosphor-dim: #1b3a22;
+  position:fixed; inset:0; z-index:900;      /* 高于 HUD(--z-sticky-nav:300) */
+  display:grid; place-items:center;
+  background:#000; will-change:transform,opacity;
+}
+html.intro-lock{ overflow:hidden; }          /* 播放期间锁页面滚动 */
+
+/* 舞台锁 16:9 居中,保证屏幕矩形百分比在任何设备上一致 */
+#intro .stage{ position:relative; aspect-ratio:16/9;
+  width:min(100vw, 177.77vh); max-height:100vh; overflow:hidden; }
+#intro .stage video{ position:absolute; inset:0; width:100%; height:100%;
+  object-fit:contain; background:#000; }
+#intro-fx{ position:absolute; inset:0; width:100%; height:100%; display:block;
+  image-rendering:pixelated; }
+
+#intro-hotspot{ position:absolute; z-index:3; border:0; padding:0;
+  background:transparent; cursor:pointer; opacity:0;
+  transition:opacity .35s ease; outline-offset:4px; }
+#intro-hotspot.live{ opacity:1; }
+#intro-hotspot::after{ content:""; position:absolute; inset:-8%;
+  background:radial-gradient(ellipse at center,
+    color-mix(in srgb, var(--phosphor) 20%, transparent) 0%, transparent 70%);
+  opacity:0; transition:opacity .3s ease; pointer-events:none; }
+#intro-hotspot:hover::after, #intro-hotspot:focus-visible::after{ opacity:1; }
+#intro-hotspot .label{ position:absolute; left:50%; bottom:-2.4em;
+  transform:translateX(-50%); color:var(--phosphor);
+  font:400 clamp(11px,1.3vw,14px)/1 var(--font-mono, monospace);
+  letter-spacing:.16em; white-space:nowrap;
+  animation:intro-pulse 2.4s ease-in-out infinite; }
+@keyframes intro-pulse{ 0%,100%{opacity:.3} 50%{opacity:1} }
+
+/* 屏幕上的开机文字:真实 DOM,位置每帧跟着镜头走 */
+#intro-screen{ position:absolute; z-index:2; overflow:hidden; opacity:0;
+  transition:opacity .25s ease; color:var(--phosphor);
+  font-family:var(--font-mono, monospace);
+  text-shadow:0 0 .3em color-mix(in srgb, var(--phosphor) 50%, transparent);
+  line-height:1.35; white-space:pre; padding:.7em .8em; }
+#intro-screen.live{ opacity:1; }
+#intro-screen .caret{ background:var(--phosphor); color:#000; }
+
+#intro-skip{ position:fixed; z-index:910;
+  right:max(16px,env(safe-area-inset-right));
+  bottom:max(16px,env(safe-area-inset-bottom));
+  font:400 13px/1 var(--font-mono, monospace); letter-spacing:.1em;
+  color:var(--phosphor); background:rgba(0,0,0,.7);
+  border:2px solid var(--phosphor-dim); padding:.6em 1.1em;
+  cursor:pointer; opacity:0; transition:opacity .4s ease .8s; }
+#intro-skip.live{ opacity:.75; }
+#intro-skip:hover, #intro-skip:focus-visible{ opacity:1; border-color:var(--phosphor); }
+
+/* ---- 调试工具(仅 ?intro=debug 时由 JS 激活) ---- */
+#intro-calib,#intro-tune{ position:fixed; z-index:920; display:none;
+  background:#000e; color:var(--phosphor); border:1px solid var(--phosphor-dim);
+  padding:10px 12px; font:400 12px/1.8 var(--font-mono, monospace); }
+#intro-calib{ left:12px; top:12px; max-width:min(92vw,430px); }
+#intro-tune{ right:12px; top:12px; min-width:252px; line-height:1.9; }
+#intro-calib.live,#intro-tune.live{ display:block; }
+#intro-calib b,#intro-tune b{ color:#fff; }
+#intro-calib pre,#intro-tune pre{ margin:8px 0 0; padding:6px; background:#0a120c;
+  border:1px solid var(--phosphor-dim); font-size:11px; white-space:pre-wrap; color:#cfe9d4; }
+#intro-calib .hint,#intro-tune .hint{ color:#6f8f76; }
+#intro-tune .row{ display:flex; align-items:center; justify-content:space-between; gap:8px; }
+#intro-tune .row span{ flex:1; }
+#intro-tune .row b{ min-width:3.4em; text-align:right; }
+#intro-tune button{ font:inherit; width:22px; height:22px; line-height:1; cursor:pointer;
+  color:var(--phosphor); background:#000; border:1px solid var(--phosphor-dim); }
+#intro-tune button:hover{ border-color:var(--phosphor); }
+
+#intro .guide{ position:absolute; z-index:5; pointer-events:none; display:none; }
+#intro .guide.live{ display:block; }
+#intro .guide.a{ outline:1px dashed #7ce38b; }
+#intro .guide.b{ outline:1px dashed #62a8ff; }
+#intro .guide.c{ outline:1px dashed #ff5f5f; }
+#intro .guide.sel{ outline-width:2px; outline-style:solid; }
+#intro .guide label{ position:absolute; left:0; top:-1.5em; font-size:11px;
+  background:#000c; padding:0 4px; }
+#intro .guide.a label{ color:#7ce38b; } #intro .guide.b label{ color:#62a8ff; }
+#intro .guide.c label{ color:#ff5f5f; }
+
+@media (prefers-reduced-motion: reduce){ #intro-hotspot .label{ animation:none; } }

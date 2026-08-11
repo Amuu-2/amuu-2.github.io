@@ -29,3 +29,10 @@
 - **隐私**:手机号 19519875185 + 邮箱公开——用户明确确认。
 - **发布卫生**:7 个试衣间/原型草稿页从发布分支删除(git 历史保留);main=发布、kimi-pixel=开发。
 - **待办**:简历 docx 里的旧链接(amuu-2.github.io/personal-web)待更新为新地址;用户手机真机自测;后续候选方向见 CLAUDE.md。
+
+## 2026-08-11 · CRT 开场动画(intro/)
+
+- **接入 Blender 预渲染的 CRT 开场**:昏暗房间待机循环 → 点击电脑 → 推镜(1.5s,带运动模糊)→ 打字机开机自检 → 飞进屏幕露出正文。技术路线是"预渲染视频 + DOM 接管",不用 Three.js;源项目(Blender 场景脚本/渲染管线/踩坑记录)在 `Desktop\intor\files`,仓库只放成品(两段 mp4 共 215KB)。
+- **只对新访客播一次**(`localStorage`),回访 HR 直达正文且视频零加载;`?intro=force` 重播 / `?intro=skip` 跳过 / `?intro=debug` 校准调参面板。尊重 `prefers-reduced-motion`。
+- **与站点的耦合刻意压到两点**:`window.__introActive` 旗标(站点滚轮翻页与首屏 dissolve 据此让位)+ 结束时调站点的 `pixelDissolve` 交接。开场层从 DOM 自拆,正文始终是真实 DOM(SEO/读屏不受影响)。
+- **开机自检文案是虚构机器设定**(LIMU-OS/640K/RPG_SAVE.DAT),不是简历数据,不受诚实红线约束但也不得写成绩效数字;intro 文案(含 JS 里的 bootLines)纳入字体子集扫描源(`fonts/make-subset.py` 的 SOURCES)。

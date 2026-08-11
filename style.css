@@ -1,5 +1,5 @@
 /* Hallmark · theme: studied-DNA (source: https://careers.kimi.com/zh-cn) · art direction: 像素 RPG 存档界面(场景化,非文档) */
-@import url("tokens.css?v=8"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
+@import url("tokens.css?v=9"); /* ?v= 版本号:改样式/字体后手动 +1,绕开浏览器缓存(静态站无构建,无缓存头) */
 
 /* ---------- base ---------- */
 *, *::before, *::after { box-sizing: border-box; }

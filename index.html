@@ -5,10 +5,31 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>张理牧 · 个人主页</title>
 <meta name="description" content="张理牧 —— 上海外国语大学数字经济硕士(2027 届)。四段实习:直播电商、体育社区、AI 医疗产品、海外增长,每一段都留下可验证的数字。">
-<link rel="preload" href="fonts/fusion-pixel-subset.woff2?v=8" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="style.css?v=8">
+<link rel="preload" href="fonts/fusion-pixel-subset.woff2?v=9" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=9">
+<link rel="stylesheet" href="intro/intro.css?v=1">
+<noscript><style>#intro,#intro-skip{display:none!important}</style></noscript>
 </head>
 <body>
+
+<!-- ============ CRT 开场动画(intro/):黑屋点电脑 → 推镜 → 开机 → 飞入正文 ============
+     只对新访客播一次;?intro=force 重播 · ?intro=skip 跳过 · ?intro=debug 调试面板
+     正文始终是下面的真实 DOM —— 开场只是盖在上面的一层,搜索引擎/读屏不受影响 -->
+<div id="intro" aria-label="开场动画:点击电脑进入网站">
+  <div class="stage">
+    <video id="intro-v-idle" muted playsinline loop preload="auto"></video>
+    <video id="intro-v-push" muted playsinline preload="auto"></video>
+    <canvas id="intro-fx"></canvas>
+    <button id="intro-hotspot" aria-label="启动电脑,进入网站"><span class="label">点击电脑</span></button>
+    <div id="intro-screen" aria-hidden="true"></div>
+    <div class="guide a"><label>screenRect(远景)</label></div>
+    <div class="guide b"><label>screenRectEnd(推近后)</label></div>
+    <div class="guide c"><label>hotspotRect</label></div>
+  </div>
+</div>
+<button id="intro-skip">跳过 →</button>
+<div id="intro-calib"></div>
+<div id="intro-tune"></div>
 
 <header class="hud">
   <span><b>PLAYER:</b> 张理牧</span><span class="sep">│</span>
@@ -103,7 +124,7 @@
 <dialog class="case" id="case-kuaile" data-case="kuaile" aria-label="块乐直播电商案例详情">
   <div class="case__bar">
     <span><span class="np">▣</span>STAGE 1 · 块乐 · 直播电商</span>
-    <button class="case__close" type="button">✕ ESC</button>
+    <button class="case__close" type="button">× ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -171,7 +192,7 @@
 <dialog class="case" id="case-hupu" data-case="hupu" aria-label="虎扑篮球社区案例详情">
   <div class="case__bar">
     <span><span class="np">▣</span>STAGE 2 · 虎扑 · 策略运营</span>
-    <button class="case__close" type="button">✕ ESC</button>
+    <button class="case__close" type="button">× ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -233,7 +254,7 @@
 <dialog class="case" id="case-liblib" data-case="liblib" aria-label="LibLib AI 海外投放案例详情">
   <div class="case__bar">
     <span><span class="np">▣</span>STAGE 4 · LibLib AI · 海外增长</span>
-    <button class="case__close" type="button">✕ ESC</button>
+    <button class="case__close" type="button">× ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -296,7 +317,7 @@
 <dialog class="case" id="case-angel" data-case="angel" aria-label="时代天使案例详情">
   <div class="case__bar">
     <span><span class="np">▣</span>STAGE 3 · 时代天使 · AI 产品</span>
-    <button class="case__close" type="button">✕ ESC</button>
+    <button class="case__close" type="button">× ESC</button>
   </div>
   <div class="case__body">
     <p class="case__note">示意重绘 · 非真实界面与数据</p>
@@ -374,6 +395,7 @@
   </div>
 </dialog>
 
+<script src="intro/intro.js?v=1"></script>
 <script>
 const REDUCED_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -392,7 +414,8 @@ function pixelDissolve(host, opts) {
   host.appendChild(ov);
   setTimeout(() => ov.remove(), dur + 300);
 }
-pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
+// 首屏进场:CRT 开场播放时按兵不动,由 intro.js 在飞入结束后补跑这个特效交接
+if (!window.__introActive) pixelDissolve(document.body, { fixed: true, dur: 520 });
 
 // case file viewer:卡片打开浮层;Esc / 点背景 / 关闭按钮三条路径关闭;#case-xxx 深链
 (function () {
@@ -523,6 +546,7 @@ pixelDissolve(document.body, { fixed: true, dur: 520 }); // 首屏进场
     document.body.appendChild(bar);
   }
   addEventListener("wheel", async (e) => {
+    if (window.__introActive) { e.preventDefault(); return; } // 开场期间禁止背景翻页
     if (!snapMode.matches) return;
     if (document.querySelector("dialog[open]")) {
       // 浮层打开时:浮层内滚动放行,遮罩上的滚轮拦截(防止背景翻页)
