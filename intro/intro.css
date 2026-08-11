@@ -46,6 +46,16 @@ html.intro-lock{ overflow:hidden; }          /* 播放期间锁页面滚动 */
 #intro-screen.live{ opacity:1; }
 #intro-screen .caret{ background:var(--phosphor); color:#000; }
 
+/* 屏幕内的网站预览:打字结束后在 CRT 玻璃上亮起(模糊),随飞入一起放大变清晰。
+   锐化动画由 intro.js 内联驱动(时长要和 enterMs 同步) */
+#intro-preview{ position:absolute; z-index:4; overflow:hidden; opacity:0;
+  background:#020503;
+  filter:blur(8px) brightness(.55) saturate(.8);
+  transition:opacity .45s ease; }
+#intro-preview.live{ opacity:1; }
+#intro-preview iframe{ position:absolute; left:50%; top:50%; border:0;
+  pointer-events:none; background:#000; }
+
 #intro-skip{ position:fixed; z-index:910;
   right:max(16px,env(safe-area-inset-right));
   bottom:max(16px,env(safe-area-inset-bottom));

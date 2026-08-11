@@ -32,6 +32,8 @@ const CONFIG = {
 
   pushMs     : 1500,          // 与 build_room.py 的 PUSH_FRAMES=36 对齐
   bootHoldMs : 500,
+  revealMs   : 450,           // 打字结束后,模糊的网站首屏在 CRT 上亮起
+  revealHoldMs : 350,         // 亮起后的停留,让人看清"屏幕里是网站"
   enterMs    : 1300,
 
   dither: { on:true, pixel:4, levels:6, mono:0.15, exposure:1.10, gamma:1.12 },
@@ -99,7 +101,37 @@ function layout(){
   place(screenEl, r);
   place(hotspot, CONFIG.hotspotRect);
   screenEl.style.fontSize = Math.max(4, stage.clientHeight*r.h/100/13) + 'px';
+  layoutPreview();
   if(calibOn){ place(gA,CONFIG.screenRect); place(gB,CONFIG.screenRectEnd); place(gC,CONFIG.hotspotRect); }
+}
+
+/* ---- 屏幕内的网站预览(真 iframe,同源缩影,不是截图) ----
+   缩放对齐的关键:iframe 尺寸 = 视口,按 contain 缩进 screenRectEnd;
+   toEnter 的整体放大系数恰好是它的倒数 → 飞入结束时 iframe 和真实
+   视口 1:1 像素对齐,揭开 overlay 的瞬间无缝 */
+let previewEl=null, previewFrame=null;
+function buildPreview(){
+  if(previewEl) return;
+  previewEl = document.createElement('div');
+  previewEl.id = 'intro-preview';
+  previewFrame = document.createElement('iframe');
+  previewFrame.src = location.pathname + '?intro=skip';
+  previewFrame.setAttribute('aria-hidden','true');
+  previewFrame.setAttribute('tabindex','-1');
+  previewFrame.setAttribute('title','');
+  previewEl.appendChild(previewFrame);
+  stage.appendChild(previewEl);
+  layoutPreview();
+}
+function layoutPreview(){
+  if(!previewEl) return;
+  const R = CONFIG.screenRectEnd;
+  place(previewEl, R);
+  const rw = stage.clientWidth*R.w/100, rh = stage.clientHeight*R.h/100;
+  const k0 = Math.min(rw/innerWidth, rh/innerHeight);   // contain:空边像 CRT 过扫描区
+  previewFrame.style.width  = innerWidth+'px';
+  previewFrame.style.height = innerHeight+'px';
+  previewFrame.style.transform = `translate(-50%,-50%) scale(${k0.toFixed(5)})`;
 }
 addEventListener('resize', () => { layout(); resizeCanvas(); });
 
@@ -251,7 +283,7 @@ function frame(now){
   rafId=requestAnimationFrame(frame);
   if(state==='push'){
     progress = vPush.duration ? clamp01(vPush.currentTime/vPush.duration) : 0;
-  }else if(state==='boot'||state==='enter'||state==='done'){ progress=1; }
+  }else if(state==='boot'||state==='reveal'||state==='enter'||state==='done'){ progress=1; }
   else { progress=0; }
   layout();
   const v=(state==='idle')?vIdle:vPush;
@@ -275,7 +307,16 @@ function toBoot(){
   if(state!=='push') return;
   state='boot'; progress=1; layout();
   screenEl.classList.add('live');
-  typeLines(CONFIG.bootLines, () => setTimeout(toEnter, CONFIG.bootHoldMs));
+  buildPreview();          // 提前建好 iframe,打字的几秒正好用来加载
+  typeLines(CONFIG.bootLines, () => setTimeout(toReveal, CONFIG.bootHoldMs));
+}
+/* 打字结束 → 自检文字熄灭,模糊的网站首屏在 CRT 上亮起 */
+function toReveal(){
+  if(state!=='boot') return;
+  state='reveal';
+  screenEl.classList.remove('live');            // 文字淡出(.25s transition)
+  if(previewEl) previewEl.classList.add('live');
+  setTimeout(toEnter, CONFIG.revealMs + CONFIG.revealHoldMs);
 }
 const esc = s => s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 function typeLines(lines,done){
@@ -308,11 +349,18 @@ function toEnter(){
     `transform ${CONFIG.enterMs}ms cubic-bezier(.6,0,.9,.45), ` +
     `opacity ${CONFIG.enterMs*0.55}ms ease ${CONFIG.enterMs*0.45}ms`;
   requestAnimationFrame(() => {
-    intro.style.transform=`scale(${scale.toFixed(3)})`; intro.style.opacity='0'; });
-  setTimeout(finish, CONFIG.enterMs+120);
+    intro.style.transform=`scale(${scale.toFixed(3)})`; intro.style.opacity='0';
+    if(previewEl){                              // 放大的同时变清晰
+      previewEl.style.transition = `filter ${CONFIG.enterMs}ms cubic-bezier(.6,0,.9,.45)`;
+      previewEl.style.filter = 'blur(0px) brightness(1) saturate(1)';
+    }
+  });
+  setTimeout(()=>finish(true), CONFIG.enterMs+120);
 }
-/* 结束:拆掉 overlay,把页面交还给站点脚本 */
-function finish(){
+/* 结束:拆掉 overlay,把页面交还给站点脚本。
+   arrived=true(飞入自然到达):预览已和真实页面对齐,不再放溶解;
+   arrived=false(跳过/Esc):放像素溶解补一个进场 */
+function finish(arrived){
   if(state==='done') return;
   state='done'; cancelAnimationFrame(rafId);
   vIdle.pause(); vPush.pause();
@@ -322,16 +370,14 @@ function finish(){
   document.querySelectorAll('header.hud, main').forEach(el => { el.inert = false; });
   intro.remove(); skip.remove();
   if(calib) calib.remove(); if(tune) tune.remove();
-  /* 交接特效:站点首屏的像素溶解在这里补跑(它在加载时看到
-     __introActive 为 true 而按兵不动) */
-  if(!reduceMotion && typeof window.pixelDissolve === 'function')
+  if(!arrived && !reduceMotion && typeof window.pixelDissolve === 'function')
     window.pixelDissolve(document.body, { fixed:true, dur:520 });
 }
 function skipAll(){
   if(state==='done') return;
   cancelAnimationFrame(rafId);
   intro.style.transition='opacity .35s ease'; intro.style.opacity='0';
-  setTimeout(finish,360);
+  setTimeout(()=>finish(false),360);
 }
 hotspot.addEventListener('click',toPush);
 skip.addEventListener('click',skipAll);
