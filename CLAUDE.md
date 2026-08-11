@@ -20,6 +20,8 @@ python -m http.server 8173   # 然后开 http://127.0.0.1:8173/index.html
 
 ## 硬约束(违反必出问题)
 
+0. **任何页面改动必须桌面 + 手机双端同改同验,并在动手前主动提醒用户**(用户 2026-08-11 明确要求)。"桌面看着没问题"推不出"手机没问题",反之亦然 —— 已经栽过两次:①手机端布局曾是桌面硬搬(桌面靠整屏翻页建立"一屏一场景",手机降级自然滚动后变成 0.94/1.25/0.61 屏的随机值)②案例浮层 `position:relative` 在手机上只显示成顶部一条白条,桌面因浏览器自动把模态框滚进视野而完全看不出来。窄屏至少验到 320px。HR 很可能直接用手机点开链接,手机端坏掉代价更高
+
 1. **改任何页面文案后必须重新生成字体子集**,否则新字符回退系统黑体、像素字里夹黑体字(用户称之为"乱码感")。方法:`C:/python/python.exe fonts/make-subset.py`(扫描源含 intro/ 的 JS/CSS —— **intro 里的 bootLines 等 JS 字符串也是页面文案**),跑完把 `?v=` 版本号 +1(共四处:index.html×2、style.css、tokens.css)。完整字体在 `D:\claude workspace\fusion-pixel-zh_hans-FULL.woff2`,丢了去 TakWolf/fusion-pixel-font releases 重下 12px monospaced zh_hans。⚠ 不要用 PowerShell 管道改这些 UTF-8 文件(PS 5.1 无 BOM 会按 GBK 读,全文变乱码),用编辑器/Edit 工具改
 2. **所有数字必须来自用户简历,禁止编造**;案例浮层必须保留「示意重绘 · 非真实界面与数据」标注(在职公司合规红线)
 3. **不加辉光/渐变/圆角**——用户明确反感"AI 感",像素语言 = 直角 + 2px 边框 + 反白 hover
