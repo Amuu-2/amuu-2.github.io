@@ -37,14 +37,34 @@ if (!intro) return;
 
 /* ---------- ① 配置 ---------- */
 const CONFIG = {
-  idleVideo : 'intro/video/idle.mp4',
-  pushVideo : 'intro/video/push.mp4',
-
-  /* 屏幕矩形(舞台百分比),与 Blender 相机参数数学对齐,勿手改;
-     要校准用 ?intro=debug 按 C */
-  screenRect    : { x:39.6, y:39.4, w:10.6, h:11.6 },
-  screenRectEnd : { x:26.0, y:23.7, w:48.0, h:52.6 },
-  hotspotRect   : { x:34.5, y:36.5, w:19.0, h:28.0 },
+  /* 两套构图:横版(桌面 16:9)与竖版(手机 9:16)。竖版不是把横版裁一刀,
+     是 Blender 里为竖幅重新取景渲的另一套 —— 手机上才能同时做到画面满屏
+     和房间完整。两套都由 build_room.py 生成(set INTRO_PORTRAIT=1 出竖版),
+     矩形数值是脚本按相机参数反算后打印出来的,勿手改;要校准用 ?intro=debug 按 C */
+  landscape: {
+    aspect    : 16/9,
+    idleVideo : 'intro/video/idle.mp4',
+    pushVideo : 'intro/video/push.mp4',
+    textRows  : 13,        // 开机文字按"屏幕框高能放几行"定字号,见 layout()
+    screenRect    : { x:39.6, y:39.4, w:10.6, h:11.6 },
+    screenRectEnd : { x:26.0, y:23.7, w:48.0, h:52.6 },
+    hotspotRect   : { x:34.5, y:36.5, w:19.0, h:28.0 },
+  },
+  portrait: {
+    aspect    : 9/16,
+    idleVideo : 'intro/video/idle-portrait.mp4',
+    pushVideo : 'intro/video/push-portrait.mp4',
+    /* 竖版屏幕框比横版矮,沿用 13 行会把字压到 13.8px(比改版前还小)。
+       10.5 行 → 约 17px,与横版手机端持平;自检只有 6 行,放得下 */
+    textRows  : 10.5,
+    /* 几何反算值 { x:20.8, y:45.8, w:27.4, h:11.5 } / { x:18.0, y:36.5, w:64.0, h:27.0 },
+       纵向套用与横版相同的 0.82 校准系数(中心不变),让开机文字框的形状两版一致 */
+    screenRect    : { x:20.8, y:46.9, w:27.4, h:9.4  },
+    screenRectEnd : { x:18.0, y:39.0, w:64.0, h:22.1 },
+    /* 点击热区包住整台电脑:机箱 x -0.575~-0.125、显示器顶 z=1.22 到桌面 z=0.75,
+       按竖版相机(x=-0.18, z=1.10, 画面 1.097×1.95m)换算成画面百分比 */
+    hotspotRect   : { x:14.0, y:43.9, w:41.0, h:24.1 },
+  },
 
   pushMs     : 1500,          // 与 build_room.py 的 PUSH_FRAMES=36 对齐
   bootHoldMs : 500,
@@ -117,13 +137,22 @@ document.querySelectorAll('header.hud, main').forEach(el => { el.inert = true; }
    object-fit 管不到它,直接改 CSS 只会把画面拉扁。
    裁到 MIN_STAGE_ASPECT 时仍能完整看到显示器(x 39.6~50.2%)和
    百叶窗(x 41~71%),再方就要把窗户切掉了。 */
-const VIDEO_ASPECT = 16/9;
-const MIN_STAGE_ASPECT = 0.9;
+/* 选构图:手机竖屏用竖版渲染,其余(桌面/平板/横屏)用横版。
+   0.68 这个阈值把手机(0.42~0.56)和平板竖屏(iPad 0.75)分开 —— 平板用横版
+   反而填得更满。构图在启动时选定一次不再变:中途转屏时靠下面的裁切/留边
+   逻辑降级处理,不做视频热切换(开场只有 7 秒,不值得为转屏加这个复杂度) */
+const PORTRAIT_MAX_ASPECT = 0.68;
+const V = (innerWidth/innerHeight <= PORTRAIT_MAX_ASPECT) ? CONFIG.portrait : CONFIG.landscape;
+
+/* 舞台比例:上限是所选视频自身的比例(超过就得裁高度,mapRect 只裁宽度),
+   下限限制最多能裁掉多少宽度。横版裁到 0.9 仍完整保留显示器和百叶窗;
+   竖版本身就是竖幅,手机上只需裁掉约 18% 宽就能满屏 */
+const MIN_STAGE_ASPECT = V === CONFIG.portrait ? 0.40 : 0.9;
 function stageAspect(){
-  return Math.min(VIDEO_ASPECT, Math.max(MIN_STAGE_ASPECT, innerWidth/innerHeight));
+  return Math.min(V.aspect, Math.max(MIN_STAGE_ASPECT, innerWidth/innerHeight));
 }
 function cropFrac(){                 // 舞台里能看到原画面宽度的比例
-  return Math.min(1, stageAspect()/VIDEO_ASPECT);
+  return Math.min(1, stageAspect()/V.aspect);
 }
 /* 原画面百分比 → 裁切后的舞台百分比。纵向不裁,所以 y/h 原样透传 */
 function mapRect(r){
@@ -148,16 +177,16 @@ function place(el,r){ el.style.left=r.x+'%'; el.style.top=r.y+'%';
 
 let progress = 0;
 function currentScreenRect(){
-  return lerpRect(CONFIG.screenRect, CONFIG.screenRectEnd, clamp01(progress));
+  return lerpRect(V.screenRect, V.screenRectEnd, clamp01(progress));
 }
 function layout(){
   const r = mapRect(currentScreenRect());
   place(screenEl, r);
-  place(hotspot, mapRect(CONFIG.hotspotRect));
-  screenEl.style.fontSize = Math.max(4, stage.clientHeight*r.h/100/13) + 'px';
+  place(hotspot, mapRect(V.hotspotRect));
+  screenEl.style.fontSize = Math.max(4, stage.clientHeight*r.h/100/V.textRows) + 'px';
   layoutPreview();
-  if(calibOn){ place(gA,mapRect(CONFIG.screenRect)); place(gB,mapRect(CONFIG.screenRectEnd));
-               place(gC,mapRect(CONFIG.hotspotRect)); }
+  if(calibOn){ place(gA,mapRect(V.screenRect)); place(gB,mapRect(V.screenRectEnd));
+               place(gC,mapRect(V.hotspotRect)); }
 }
 
 /* ---- 屏幕内的网站预览(真 iframe,同源缩影,不是截图) ----
@@ -234,7 +263,7 @@ function buildPreview(){
 
 function layoutPreview(){
   if(!previewEl) return;
-  const R = mapRect(CONFIG.screenRectEnd);
+  const R = mapRect(V.screenRectEnd);
   place(previewEl, R);
   if(!previewFrame) return;
   const rw = stage.clientWidth*R.w/100, rh = stage.clientHeight*R.h/100;
@@ -476,7 +505,7 @@ function typeLines(lines,done){
 function toEnter(){
   if(state==='done') return;
   state='enter';
-  const R=mapRect(CONFIG.screenRectEnd);        // 从推近后的屏幕位置继续飞进去
+  const R=mapRect(V.screenRectEnd);             // 从推近后的屏幕位置继续飞进去
   const sw=stage.clientWidth, sh=stage.clientHeight;
   const rect=stage.getBoundingClientRect();
   const scale=Math.max(innerWidth/(sw*R.w/100), innerHeight/(sh*R.h/100));
@@ -604,7 +633,7 @@ if(DEBUG){
 (async function start(){
   applyStageAspect(); layout(); resizeCanvas(); initGL();
   const [okIdle,okPush]=await Promise.all([
-    probe(vIdle,CONFIG.idleVideo), probe(vPush,CONFIG.pushVideo) ]);
+    probe(vIdle,V.idleVideo), probe(vPush,V.pushVideo) ]);
   if(!(okIdle&&okPush)){
     console.warn('[intro] 视频加载失败，直接进入正文。');
     finish(); return;

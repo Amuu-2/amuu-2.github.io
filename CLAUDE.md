@@ -15,7 +15,7 @@ python -m http.server 8173   # 然后开 http://127.0.0.1:8173/index.html
 - 原生 HTML/CSS/JS 三文件:`index.html`(结构+全部 JS)、`style.css`(RPG 皮肤)、`tokens.css`(设计 token,颜色/字体/间距全走 CSS 变量)
 - `fonts/fusion-pixel-subset.woff2` — 缝合像素字体简中子集(OFL 开源),自托管,无外部 CDN 依赖;`fonts/make-subset.py` — 子集重生成脚本(硬约束 1 的执行工具)
 - `assets/portrait.png` — 像素风肖像;`.hallmark/log.json` — 历次设计迭代记录
-- `intro/` — CRT 开场动画模块(intro.css / intro.js / video/*.mp4 共 215KB)。**每次访问都播**(不想看的点右下角跳过,它在待机 0.8s 后浮现);`?intro=skip` 直接跳过、`?intro=debug` 调试面板。与站点只有两点耦合:`window.__introActive` 旗标 + 结束时调 `pixelDissolve` 交接。**动手前先读 intro.js 文件头那五条**(它自带"改这个文件前先读这段")。**视频/矩形坐标的源头是 Blender 项目(`Desktop\intor\files`,含自己的 CLAUDE.md)**,改画面去那边改了重渲,别动仓库里的 mp4。⚠ 改 intro.js/intro.css 后必须把 index.html 里它的 `?v=` +1(静态站无缓存头,浏览器会一直跑旧脚本——已经栽过一次)
+- `intro/` — CRT 开场动画模块。**视频有横竖两套构图**:横版 16:9(桌面/平板/横屏,215KB)与竖版 9:16(手机竖屏,252KB),`intro.js` 按视口比例选一套(阈值 0.68,把手机 0.42~0.56 和平板竖屏 0.75 分开),每个访客只加载其中一套。**竖版不是把横版裁一刀,是 Blender 里为竖幅重新取景渲的另一套** —— 手机上才能同时做到画面满屏和房间完整。改场景后两套都要重渲(命令见 Blender 项目的 CLAUDE.md)。**每次访问都播**(不想看的点右下角跳过,它在待机 0.8s 后浮现);`?intro=skip` 直接跳过、`?intro=debug` 调试面板。与站点只有两点耦合:`window.__introActive` 旗标 + 结束时调 `pixelDissolve` 交接。**动手前先读 intro.js 文件头那五条**(它自带"改这个文件前先读这段")。**视频/矩形坐标的源头是 Blender 项目(`Desktop\intor\files`,含自己的 CLAUDE.md)**,改画面去那边改了重渲,别动仓库里的 mp4。⚠ 改 intro.js/intro.css 后必须把 index.html 里它的 `?v=` +1(静态站无缓存头,浏览器会一直跑旧脚本——已经栽过一次)
 - 开场结尾"屏幕里长出网站"的预览层,是 iframe 加载本站自己(`?intro=skip` 防递归),**不是截图**。所以站点怎么改版都不用同步维护它;曾试过"实时截取 DOM + 开场同款抖动"的方案,视觉差别用户看不出,却要跟着站点结构维护且失败时静默降级,已否决(见 DECISIONS)
 
 ## 硬约束(违反必出问题)
