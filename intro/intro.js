@@ -287,7 +287,7 @@ function typeLines(lines,done){
     if(ci<text.length){
       out+=text[ci++]; if(ci%2===0) keySound();
       screenEl.innerHTML=esc(out)+'<span class="caret">_</span>';
-      setTimeout(step, 16+Math.random()*22);
+      setTimeout(step, 12+Math.random()*16);
     }else{
       out+='\n'; li++; ci=0;
       screenEl.innerHTML=esc(out)+'<span class="caret">_</span>';
