@@ -1,12 +1,17 @@
 /* ============================================================
    CRT 开场动画 · 样式层
    源项目(Blender 场景/渲染管线)在 C:\Users\张理牧\Desktop\intor\files
-   颜色:--phosphor 必须保持 hex 格式 —— intro.js 会解析它喂给 WebGL 着色器
    字体:走站点 tokens 的像素字体;改这里的任何文案要重跑 fonts/make-subset.py
    ============================================================ */
-#intro{
+/* 磷绿必须定义在 :root 而不是 #intro —— #intro-skip / #intro-calib / #intro-tune
+   在 HTML 里是 #intro 的兄弟节点(它们要 position:fixed 且不能被 #intro 的
+   飞入 transform 带走),定义在 #intro 上它们取不到,会掉回站点的近白 ink 色。
+   ⚠ --phosphor 必须保持 hex 格式:intro.js 会正则解析它喂给 WebGL 着色器 */
+:root{
   --phosphor:     #7ce38b;
   --phosphor-dim: #1b3a22;
+}
+#intro{
   position:fixed; inset:0; z-index:900;      /* 高于 HUD(--z-sticky-nav:300) */
   display:grid; place-items:center;
   background:#000; will-change:transform,opacity;
@@ -48,7 +53,7 @@ html.intro-lock{ overflow:hidden; }          /* 播放期间锁页面滚动 */
 
 /* 屏幕内的网站预览:打字结束后在 CRT 玻璃上亮起,随飞入逐档升分辨率变清晰。
    像素化不是 CSS blur,是 SVG 马赛克滤镜(intro.js 里生成并逐档驱动),
-   外加 6 档色阶量化 —— 和开场抖动(pixel:4/levels:6)同一套视觉语言 */
+   外加色阶量化 —— 和开场抖动(pixel:4/levels:6)同一套视觉语言 */
 #intro-preview{ position:absolute; z-index:4; overflow:hidden; opacity:0;
   background:#020503;
   transition:opacity .45s ease; }

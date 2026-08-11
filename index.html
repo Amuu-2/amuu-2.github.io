@@ -7,13 +7,13 @@
 <meta name="description" content="张理牧 —— 上海外国语大学数字经济硕士(2027 届)。四段实习:直播电商、体育社区、AI 医疗产品、海外增长,每一段都留下可验证的数字。">
 <link rel="preload" href="fonts/fusion-pixel-subset.woff2?v=9" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css?v=9">
-<link rel="stylesheet" href="intro/intro.css?v=5">
+<link rel="stylesheet" href="intro/intro.css?v=6">
 <noscript><style>#intro,#intro-skip{display:none!important}</style></noscript>
 </head>
 <body>
 
 <!-- ============ CRT 开场动画(intro/):黑屋点电脑 → 推镜 → 开机 → 飞入正文 ============
-     只对新访客播一次;?intro=force 重播 · ?intro=skip 跳过 · ?intro=debug 调试面板
+     每次访问都播(不想看的点右下角跳过);?intro=skip 直接跳过 · ?intro=debug 调试面板
      正文始终是下面的真实 DOM —— 开场只是盖在上面的一层,搜索引擎/读屏不受影响 -->
 <div id="intro" aria-label="开场动画:点击电脑进入网站">
   <div class="stage">
@@ -395,7 +395,7 @@
   </div>
 </dialog>
 
-<script src="intro/intro.js?v=10"></script>
+<script src="intro/intro.js?v=11"></script>
 <script>
 const REDUCED_MOTION = matchMedia("(prefers-reduced-motion: reduce)").matches;
 

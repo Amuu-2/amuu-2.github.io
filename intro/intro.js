@@ -72,7 +72,10 @@ const CONFIG = {
     ['> RUN ZHANGLIMU.EXE', 320],
   ],
 
-  onlyFirstVisit: true,       // 上线值:回访 HR 不用再看一遍;调试用 ?intro=force
+  /* 每次访问都播。用户定的:不想看的人点右下角"跳过"就行(它在待机开始
+     0.8s 后浮现),不该由我们替访客决定。改成 true 则只对新访客播一次。
+     注意:减动效偏好(prefers-reduced-motion)仍然直接跳过,那是无障碍要求 */
+  onlyFirstVisit: false,
 };
 
 /* ---------- ② 基础 ---------- */
